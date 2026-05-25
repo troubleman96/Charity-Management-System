@@ -7,7 +7,7 @@
 ## 📋 Table of Contents
 1. [What is CharityOS?](#-what-is-charityos)
 2. [Who is it For?](#-who-is-it-for)
-3. [Tech Stack](#-tech-stack)*Built for impact. Developed with ❤️ for Tanzania.*
+3. [Tech Stack](#-tech-stack)
 
 4. [Project Folder Structure](#-project-folder-structure)
 5. [Documentation Reference Guide](#-documentation-reference-guide)

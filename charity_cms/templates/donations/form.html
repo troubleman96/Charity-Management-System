@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Record Donation{% endblock %}
+{% block page_title %}Record Donation{% endblock %}
+{% block page_subtitle %}Log an incoming cash or in-kind contribution{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 600px; margin: 0 auto;">
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Donor</label>
+                {{ form.donor }}
+                <div class="help-text">Leave blank for anonymous donation.</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Donation Type</label>
+                {{ form.donation_type }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Date Received</label>
+                {{ form.donation_date }}
+                <div class="error-text">{{ form.donation_date.errors }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Purpose (Optional)</label>
+                {{ form.purpose }}
+            </div>
+        </div>
+
+        <h3 style="font-size: 14px; margin: 24px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Contribution Details</h3>
+        
+        <!-- Cash Fields -->
+        <div id="cash-section">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Amount (TZS)</label>
+                    {{ form.amount }}
+                    <div class="error-text">{{ form.amount.errors }}</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Method</label>
+                    {{ form.payment_method }}
+                    <div class="error-text">{{ form.payment_method.errors }}</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Transaction Reference</label>
+                {{ form.transaction_reference }}
+            </div>
+        </div>
+
+        <!-- In-Kind Fields -->
+        <div id="inkind-section" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Description of Items</label>
+                {{ form.in_kind_description }}
+                <div class="error-text">{{ form.in_kind_description.errors }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estimated Value (TZS - Optional)</label>
+                {{ form.in_kind_estimated_value }}
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
+            <label class="form-label">Internal Notes</label>
+            {{ form.notes }}
+        </div>
+
+        <div style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+            <a href="{% url 'donations:list' %}" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">Record Donation</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('id_donation_type');
+        const cashSection = document.getElementById('cash-section');
+        const inkindSection = document.getElementById('inkind-section');
+
+        function toggleSections() {
+            if (typeSelect.value === 'cash') {
+                cashSection.style.display = 'block';
+                inkindSection.style.display = 'none';
+            } else if (typeSelect.value === 'in_kind') {
+                cashSection.style.display = 'none';
+                inkindSection.style.display = 'block';
+            } else {
+                cashSection.style.display = 'none';
+                inkindSection.style.display = 'none';
+            }
+        }
+
+        typeSelect.addEventListener('change', toggleSections);
+        toggleSections(); // Run on load
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Reports & Analytics{% endblock %}
+{% block page_title %}Reports & Analytics{% endblock %}
+{% block page_subtitle %}Generate PDF reports for operations and donors{% endblock %}
+
+{% block content %}
+<div class="grid3">
+    <!-- Monthly Summary Report -->
+    <div class="panel" style="text-align: center; padding: 32px 24px;">
+        <div style="width: 64px; height: 64px; background: rgba(110, 231, 183, 0.1); color: var(--accent); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+            <i class="ph ph-calendar-check"></i>
+        </div>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">Monthly Summary</h3>
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 24px;">
+            Comprehensive overview of donations received, funds allocated, and new beneficiaries registered in the current month.
+        </p>
+        <a href="{% url 'reports:monthly_summary' %}" class="btn-primary" target="_blank">
+            <i class="ph ph-download-simple"></i> Download PDF
+        </a>
+    </div>
+
+    <!-- Donor Directory Report -->
+    <div class="panel" style="text-align: center; padding: 32px 24px;">
+        <div style="width: 64px; height: 64px; background: rgba(129, 140, 248, 0.1); color: var(--accent2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+            <i class="ph ph-users"></i>
+        </div>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">Donor Directory</h3>
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 24px;">
+            Complete list of all registered donors, their contact information, and their lifetime contribution totals.
+        </p>
+        <a href="{% url 'reports:donor_report' %}" class="btn-primary" target="_blank" style="background: var(--accent2); color: white;">
+            <i class="ph ph-download-simple"></i> Download PDF
+        </a>
+    </div>
+
+    <!-- Assistance Needs Report (Placeholder) -->
+    <div class="panel" style="text-align: center; padding: 32px 24px; opacity: 0.7;">
+        <div style="width: 64px; height: 64px; background: rgba(251, 191, 36, 0.1); color: var(--warn); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">
+            <i class="ph ph-hand-heart"></i>
+        </div>
+        <h3 style="font-size: 16px; margin-bottom: 8px;">Pending Needs Report</h3>
+        <p style="font-size: 13px; color: var(--muted); margin-bottom: 24px;">
+            List of all pending assistance requests awaiting funding or approval. (Coming Soon)
+        </p>
+        <button class="btn-secondary" disabled>
+            <i class="ph ph-clock"></i> Coming Soon
+        </button>
+    </div>
+</div>
+{% endblock %}

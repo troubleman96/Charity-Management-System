@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Donor Portal{% endblock %}
+{% block page_title %}My Portal{% endblock %}
+{% block page_subtitle %}See the impact of your contributions{% endblock %}
+
+{% block content %}
+<div class="kpi-grid">
+    <div class="kpi">
+        <div class="kpi-label">Total Donated</div>
+        <div class="kpi-value accent">{{ total_donated|currency }}</div>
+        <div class="kpi-sub">Lifetime contribution</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Donations Made</div>
+        <div class="kpi-value">{{ donation_count }}</div>
+        <div class="kpi-sub">Thank you!</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Sponsored Children</div>
+        <div class="kpi-value accent2">{{ sponsored_links.count }}</div>
+        <div class="kpi-sub">Active sponsorships</div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- Sponsored Beneficiaries -->
+    <div class="panel">
+        <div class="panel-title">My Sponsored Children</div>
+        <div class="req-list">
+            {% for link in sponsored_links %}
+            <div class="req-item">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    {% if link.beneficiary.photo %}
+                        <img src="{{ link.beneficiary.photo.url }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        <div class="avatar avatar-blue" style="width: 40px; height: 40px; font-size: 16px;">
+                            {{ link.beneficiary.first_name|first }}{{ link.beneficiary.last_name|first }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <div class="req-name">{{ link.beneficiary.get_full_name }}</div>
+                        <div class="req-type">Age: {{ link.beneficiary.age }} • {{ link.beneficiary.location_region }}</div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div style="color: var(--muted); font-size: 13px; padding: 10px;">
+                You are not currently sponsoring any specific children. 
+                Your general donations help support all our programs.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Updates -->
+    <div class="panel">
+        <div class="panel-title">Recent Updates</div>
+        <div class="req-list">
+            {% for update in recent_updates %}
+            <div class="req-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+                    <div class="req-name">{{ update.title }}</div>
+                    <div class="req-type">{{ update.created_at|date:"M d, Y" }}</div>
+                </div>
+                <div style="font-size: 12px; color: var(--text);">
+                    <strong style="color: var(--accent2);">{{ update.beneficiary.first_name }}:</strong> 
+                    {{ update.content|truncatewords:20 }}
+                </div>
+            </div>
+            {% empty %}
+            <div style="color: var(--muted); font-size: 13px; padding: 10px;">
+                No recent updates.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Donations Table -->
+<div class="panel" style="margin-top: 16px;">
+    <div class="panel-title">
+        Recent Contributions
+        <a href="{% url 'donors:history' %}" class="btn-sm">View History</a>
+    </div>
+    <table class="dt">
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Receipt</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for donation in recent_donations %}
+            <tr>
+                <td style="font-family: var(--font-mono); color: var(--accent2);">{{ donation.donation_ref }}</td>
+                <td style="font-family: var(--font-mono)">
+                    {% if donation.donation_type == 'cash' %}
+                        {{ donation.amount|currency }}
+                    {% else %}
+                        In-Kind
+                    {% endif %}
+                </td>
+                <td style="color: var(--muted)">{{ donation.donation_date|date:"M d, Y" }}</td>
+                <td>
+                    <span class="badge {{ donation.status|status_color }}">{{ donation.get_status_display }}</span>
+                </td>
+                <td>
+                    {% if donation.receipt and donation.receipt.pdf_file %}
+                        <a href="{{ donation.receipt.pdf_file.url }}" target="_blank" class="btn-action" title="Download Receipt">
+                            <i class="ph ph-download-simple"></i>
+                        </a>
+                    {% else %}
+                        <span style="color: var(--muted); font-size: 11px;">Pending</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: var(--muted);">No recent donations.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

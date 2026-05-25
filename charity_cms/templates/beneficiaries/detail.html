@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Beneficiary Details{% endblock %}
+{% block page_title %}{{ beneficiary.get_full_name }}{% endblock %}
+{% block page_subtitle %}{{ beneficiary.beneficiary_code }} • Age: {{ beneficiary.age }} • Enrolled: {{ beneficiary.date_enrolled|date:"M Y" }}{% endblock %}
+
+{% block content %}
+<div class="grid2">
+    <!-- Profile Card -->
+    <div class="panel">
+        <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            {% if beneficiary.photo %}
+                <img src="{{ beneficiary.photo.url }}" style="width: 120px; height: 120px; border-radius: 12px; object-fit: cover;">
+            {% else %}
+                <div class="avatar avatar-blue" style="width: 120px; height: 120px; border-radius: 12px; font-size: 40px;">
+                    {{ beneficiary.first_name|first }}
+                </div>
+            {% endif %}
+            
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">{{ beneficiary.get_full_name }}</h2>
+                    <span class="badge {{ beneficiary.status|status_color }}">{{ beneficiary.get_status_display }}</span>
+                </div>
+                
+                <div class="grid2" style="margin-top: 16px; gap: 8px;">
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">Date of Birth</div>
+                        <div style="font-size: 13px;">{{ beneficiary.date_of_birth|date:"M d, Y" }} ({{ beneficiary.age }} yrs)</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">Gender</div>
+                        <div style="font-size: 13px;">{{ beneficiary.get_gender_display }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">School</div>
+                        <div style="font-size: 13px;">{{ beneficiary.school_name|default:"Not enrolled" }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">Grade</div>
+                        <div style="font-size: 13px;">{{ beneficiary.school_grade|default:"-" }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">Region</div>
+                        <div style="font-size: 13px;">{{ beneficiary.location_region }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 11px; color: var(--muted);">District</div>
+                        <div style="font-size: 13px;">{{ beneficiary.location_district }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 14px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Guardian Information</h3>
+        <div class="grid2" style="gap: 8px;">
+            <div>
+                <div style="font-size: 11px; color: var(--muted);">Name</div>
+                <div style="font-size: 13px;">{{ beneficiary.guardian_name }} ({{ beneficiary.guardian_relationship }})</div>
+            </div>
+            <div>
+                <div style="font-size: 11px; color: var(--muted);">Phone</div>
+                <div style="font-size: 13px; font-family: var(--font-mono);">{{ beneficiary.guardian_phone }}</div>
+            </div>
+        </div>
+        
+        {% if beneficiary.health_status %}
+        <h3 style="font-size: 14px; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Health Status</h3>
+        <p style="font-size: 13px; color: var(--text);">{{ beneficiary.health_status }}</p>
+        {% endif %}
+        
+        <div style="margin-top: 24px; display: flex; gap: 10px;">
+            <a href="{% url 'beneficiaries:edit' beneficiary.pk %}" class="btn-primary"><i class="ph ph-pencil"></i> Edit Profile</a>
+        </div>
+    </div>
+
+    <!-- Right Column (Links & History) -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Active Sponsors -->
+        <div class="panel">
+            <div class="panel-title">Active Sponsors</div>
+            <div class="req-list">
+                {% for link in donor_links %}
+                <div class="req-item">
+                    <div>
+                        <div class="req-name">{{ link.donor.display_name }}</div>
+                        <div class="req-type">Since {{ link.start_date|date:"M Y" }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color: var(--muted); font-size: 13px; padding: 10px;">No active sponsors.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Assistance Requests -->
+        <div class="panel">
+            <div class="panel-title">
+                Assistance History
+                <a href="{% url 'beneficiaries:request_create' %}?beneficiary={{ beneficiary.pk }}" class="btn-sm"><i class="ph ph-plus"></i> Request</a>
+            </div>
+            <div class="req-list">
+                {% for req in assistance_requests %}
+                <div class="req-item">
+                    <div>
+                        <div class="req-name">{{ req.get_request_type_display }}</div>
+                        <div class="req-type">{{ req.created_at|date:"M d, Y" }} • {{ req.estimated_cost|currency }}</div>
+                    </div>
+                    <span class="badge {{ req.status|status_color }}">{{ req.get_status_display }}</span>
+                </div>
+                {% empty %}
+                <div style="color: var(--muted); font-size: 13px; padding: 10px;">No assistance requests logged.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Progress Updates -->
+        <div class="panel">
+            <div class="panel-title">
+                Progress Updates
+                <a href="{% url 'beneficiaries:update_create' %}?beneficiary={{ beneficiary.pk }}" class="btn-sm"><i class="ph ph-plus"></i> Update</a>
+            </div>
+            <div class="req-list">
+                {% for update in updates %}
+                <div class="req-item" style="flex-direction: column; align-items: flex-start;">
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 4px;">
+                        <div class="req-name">{{ update.title }}</div>
+                        <div class="req-type">{{ update.created_at|date:"M d, Y" }}</div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text);">{{ update.content|truncatewords:15 }}</div>
+                </div>
+                {% empty %}
+                <div style="color: var(--muted); font-size: 13px; padding: 10px;">No progress updates logged.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Beneficiaries{% endblock %}
+{% block page_title %}Beneficiaries{% endblock %}
+{% block page_subtitle %}Manage orphans enrolled in the program{% endblock %}
+
+{% block content %}
+<div class="panel" style="margin-bottom: 24px;">
+    <form method="get" class="form-row" style="grid-template-columns: 2fr 1fr 1fr auto; align-items: end;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Search</label>
+            <input type="text" name="search" value="{{ search }}" class="form-input" placeholder="Name or Code...">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-input">
+                <option value="">All Statuses</option>
+                {% for val, label in status_choices %}
+                    <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Region</label>
+            <input type="text" name="region" value="{{ current_region }}" class="form-input" placeholder="e.g. Dar es Salaam">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <button type="submit" class="btn-primary">Filter</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel">
+    <div class="panel-title">
+        Directory
+        <a href="{% url 'beneficiaries:create' %}" class="btn-sm"><i class="ph ph-plus"></i> Add New</a>
+    </div>
+    
+    <table class="dt">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Region</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ben in beneficiaries %}
+            <tr>
+                <td style="font-family: var(--font-mono); color: var(--accent2);">{{ ben.beneficiary_code }}</td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        {% if ben.photo %}
+                            <img src="{{ ben.photo.url }}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div class="avatar avatar-blue">{{ ben.first_name|first }}</div>
+                        {% endif %}
+                        {{ ben.get_full_name }}
+                    </div>
+                </td>
+                <td>{{ ben.age }}</td>
+                <td style="color: var(--muted)">{{ ben.location_region }}</td>
+                <td>
+                    <span class="badge {{ ben.status|status_color }}">{{ ben.get_status_display }}</span>
+                </td>
+                <td>
+                    <a href="{% url 'beneficiaries:detail' ben.pk %}" class="btn-action"><i class="ph ph-eye"></i></a>
+                    <a href="{% url 'beneficiaries:edit' ben.pk %}" class="btn-action"><i class="ph ph-pencil"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: var(--muted); padding: 30px;">
+                    No beneficiaries found matching your criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="page-btn"><i class="ph ph-caret-left"></i></a>
+        {% endif %}
+        
+        <span style="font-size: 12px; color: var(--muted);">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="page-btn"><i class="ph ph-caret-right"></i></a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

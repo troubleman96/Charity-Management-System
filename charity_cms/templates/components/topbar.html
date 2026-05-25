@@ -1,0 +1,29 @@
+{% load charity_tags %}
+<div class="topbar">
+    <div>
+        <h1 class="topbar-title">{% block page_title %}Dashboard{% endblock %}</h1>
+        <div class="topbar-subtitle">{% block page_subtitle %}Welcome back, {{ user.first_name|default:user.username }}{% endblock %}</div>
+    </div>
+    <div class="topbar-right">
+        <!-- Notifications -->
+        <a href="{% url 'communications:notifications' %}" class="btn-secondary" style="padding: 8px 12px; border-radius: 50%;">
+            <i class="ph ph-bell"></i>
+            {% if unread_notifications_count %}
+                <div class="notif-dot" style="position: absolute; margin-left: -5px; margin-top: -5px;"></div>
+            {% endif %}
+        </a>
+
+        <!-- User Dropdown (simple link for now) -->
+        <a href="{% url 'accounts:profile' %}" class="btn-secondary" style="border: none; background: transparent;">
+            <div class="avatar avatar-blue">{{ user|initials }}</div>
+            <span style="font-size: 12px; font-weight: 500; margin-left: 8px;">{{ user.first_name|default:user.username }}</span>
+        </a>
+        
+        <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-action" title="Logout">
+                <i class="ph ph-sign-out"></i>
+            </button>
+        </form>
+    </div>
+</div>

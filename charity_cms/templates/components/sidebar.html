@@ -1,0 +1,64 @@
+{% load static %}
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <span>Charity<em>OS</em></span>
+    </div>
+
+    {% if user.profile.is_admin %}
+        <div class="nav-section">Management</div>
+        <a href="{% url 'admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+            <i class="ph ph-squares-four"></i> Overview
+        </a>
+        <a href="{% url 'beneficiaries:list' %}" class="nav-item {% if 'beneficiaries' in request.path %}active{% endif %}">
+            <i class="ph ph-users"></i> Beneficiaries
+        </a>
+        <a href="{% url 'donations:list' %}" class="nav-item {% if 'donations' in request.path %}active{% endif %}">
+            <i class="ph ph-wallet"></i> Finances
+        </a>
+        <a href="{% url 'reports:index' %}" class="nav-item {% if 'reports' in request.path %}active{% endif %}">
+            <i class="ph ph-chart-bar"></i> Analytics
+        </a>
+
+        <div class="nav-section">System</div>
+        <a href="{% url 'communications:inbox' %}" class="nav-item {% if 'communications' in request.path %}active{% endif %}">
+            <i class="ph ph-envelope-simple"></i> Messages
+            {% if unread_messages_count %}
+                <span class="badge badge-info">{{ unread_messages_count }}</span>
+            {% endif %}
+        </a>
+        <a href="/admin/" class="nav-item">
+            <i class="ph ph-gear"></i> Settings
+        </a>
+    
+    {% elif user.profile.is_staff_member %}
+        <div class="nav-section">Operations</div>
+        <a href="{% url 'staff_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'staff_dashboard' %}active{% endif %}">
+            <i class="ph ph-squares-four"></i> Dashboard
+        </a>
+        <a href="{% url 'beneficiaries:list' %}" class="nav-item {% if 'beneficiaries' in request.path %}active{% endif %}">
+            <i class="ph ph-users"></i> Beneficiaries
+        </a>
+        <a href="{% url 'donations:list' %}" class="nav-item {% if 'donations' in request.path %}active{% endif %}">
+            <i class="ph ph-wallet"></i> Log Donation
+        </a>
+
+        <div class="nav-section">System</div>
+        <a href="{% url 'communications:inbox' %}" class="nav-item {% if 'communications' in request.path %}active{% endif %}">
+            <i class="ph ph-envelope-simple"></i> Messages
+        </a>
+
+    {% elif user.profile.is_donor %}
+        <div class="nav-section">My Portal</div>
+        <a href="{% url 'donors:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="ph ph-squares-four"></i> Dashboard
+        </a>
+        <a href="{% url 'donors:history' %}" class="nav-item {% if 'history' in request.path %}active{% endif %}">
+            <i class="ph ph-receipt"></i> My Donations
+        </a>
+
+        <div class="nav-section">Account</div>
+        <a href="{% url 'accounts:profile' %}" class="nav-item {% if 'profile' in request.path %}active{% endif %}">
+            <i class="ph ph-user"></i> Profile Settings
+        </a>
+    {% endif %}
+</aside>

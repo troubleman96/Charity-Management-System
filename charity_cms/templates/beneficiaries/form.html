@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Register Beneficiary{% endblock %}
+{% block page_title %}{{ page_title }}{% endblock %}
+{% block page_subtitle %}Enter child's information into the system{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 800px; margin: 0 auto;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <h3 style="font-size: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Personal Information</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">First Name</label>
+                {{ form.first_name }}
+                <div class="error-text">{{ form.first_name.errors }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Last Name</label>
+                {{ form.last_name }}
+                <div class="error-text">{{ form.last_name.errors }}</div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                {{ form.date_of_birth }}
+                <div class="error-text">{{ form.date_of_birth.errors }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Gender</label>
+                {{ form.gender }}
+                <div class="error-text">{{ form.gender.errors }}</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Photo (Optional)</label>
+            {{ form.photo }}
+            <div class="error-text">{{ form.photo.errors }}</div>
+        </div>
+
+        <h3 style="font-size: 14px; margin: 24px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Education & Health</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">School Name</label>
+                {{ form.school_name }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Grade / Class</label>
+                {{ form.school_grade }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Health Status / Notes</label>
+            {{ form.health_status }}
+        </div>
+
+        <h3 style="font-size: 14px; margin: 24px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Guardian & Location</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Guardian Name</label>
+                {{ form.guardian_name }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Guardian Phone</label>
+                {{ form.guardian_phone }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Relationship to Child</label>
+                {{ form.guardian_relationship }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Region</label>
+                {{ form.location_region }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">District / Specific Location</label>
+            {{ form.location_district }}
+        </div>
+
+        <h3 style="font-size: 14px; margin: 24px 0 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Program Status</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Date Enrolled</label>
+                {{ form.date_enrolled }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Current Status</label>
+                {{ form.status }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Internal Notes</label>
+            {{ form.notes }}
+        </div>
+        
+        <div style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+            <a href="{% url 'beneficiaries:list' %}" class="btn-secondary">Cancel</a>
+            <button type="submit" class="btn-primary">{{ submit_text }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

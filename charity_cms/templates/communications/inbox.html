@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Communications{% endblock %}
+{% block page_title %}Communications{% endblock %}
+{% block page_subtitle %}Internal messaging and notifications{% endblock %}
+
+{% block content %}
+<div class="grid2" style="grid-template-columns: 2fr 1fr;">
+    
+    <!-- Inbox Panel -->
+    <div class="panel">
+        <div class="panel-title">
+            Inbox
+            <a href="{% url 'communications:compose' %}" class="btn-sm"><i class="ph ph-pencil-simple"></i> Compose</a>
+        </div>
+        
+        <div class="req-list">
+            {% for msg in messages %}
+            <a href="{% url 'communications:message_detail' msg.pk %}" class="req-item" style="text-decoration: none; border-left: 3px solid {% if msg.is_read %}transparent{% else %}var(--accent){% endif %};">
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <div class="req-name" style="{% if not msg.is_read %}font-weight: 600; color: white;{% endif %}">{{ msg.sender.get_full_name|default:msg.sender.username }}</div>
+                        <div class="req-type">{{ msg.created_at|date:"M d, Y h:i A" }}</div>
+                    </div>
+                    <div style="font-size: 13px; color: {% if not msg.is_read %}var(--text){% else %}var(--muted){% endif %};">
+                        <strong>{{ msg.subject }}</strong> - {{ msg.body|truncatewords:10 }}
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div style="text-align: center; color: var(--muted); padding: 40px 0;">
+                <i class="ph ph-envelope-simple" style="font-size: 48px; opacity: 0.2; margin-bottom: 12px; display: block;"></i>
+                Your inbox is empty.
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-btn"><i class="ph ph-caret-left"></i></a>
+            {% endif %}
+            <span style="font-size: 12px; color: var(--muted);">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-btn"><i class="ph ph-caret-right"></i></a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Sidebar -->
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Sent Messages -->
+        <div class="panel">
+            <div class="panel-title">Recently Sent</div>
+            <div class="req-list">
+                {% for msg in sent_messages %}
+                <a href="{% url 'communications:message_detail' msg.pk %}" class="req-item" style="text-decoration: none;">
+                    <div>
+                        <div class="req-name">To: {{ msg.recipient.get_full_name|default:msg.recipient.username }}</div>
+                        <div class="req-type">{{ msg.subject|truncatechars:30 }}</div>
+                    </div>
+                </a>
+                {% empty %}
+                <div style="color: var(--muted); font-size: 13px; padding: 10px;">No sent messages.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

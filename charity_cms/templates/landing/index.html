@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharityOS - Empowering Orphan Support in Tanzania</title>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Base CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <style>
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: rgba(14, 15, 17, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        .logo em {
+            color: var(--accent);
+            font-style: normal;
+        }
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px;
+            background: radial-gradient(circle at center, rgba(110, 231, 183, 0.08), transparent 50%), var(--bg);
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: 600;
+            letter-spacing: -1.5px;
+            margin-bottom: 16px;
+            max-width: 800px;
+            line-height: 1.2;
+        }
+        .hero-title span {
+            color: var(--accent);
+        }
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 32px;
+            border-radius: 16px;
+            text-align: left;
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(110, 231, 183, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .feature-desc {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">Charity<em>OS</em></div>
+    <div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="btn-primary">Go to Dashboard</a>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn-secondary" style="margin-right: 8px;">Sign In</a>
+            <a href="{% url 'accounts:register' %}" class="btn-primary">Become a Donor</a>
+        {% endif %}
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <h1 class="hero-title">Empowering Orphan Support in <span>Tanzania</span></h1>
+        <p class="hero-subtitle">
+            A comprehensive management platform connecting donors directly with the children they support, ensuring transparency and efficient aid allocation.
+        </p>
+        <div class="action-buttons">
+            <a href="{% url 'accounts:register' %}" class="btn-primary" style="padding: 14px 28px; font-size: 15px;">
+                Start Giving Today
+            </a>
+            <a href="#how-it-works" class="btn-secondary" style="padding: 14px 28px; font-size: 15px;">
+                Learn More
+            </a>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="features">
+        <div class="feature-card">
+            <div class="feature-icon"><i class="ph ph-hand-heart"></i></div>
+            <h3 class="feature-title">Direct Impact</h3>
+            <p class="feature-desc">See exactly where your donations go. Sponsor specific children and receive direct updates on their progress, education, and health.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon" style="color: var(--accent2); background: rgba(129, 140, 248, 0.1);"><i class="ph ph-shield-check"></i></div>
+            <h3 class="feature-title">Complete Transparency</h3>
+            <p class="feature-desc">Every donation is tracked. From the moment it's received to when it's allocated to a specific need, everything is logged and receipted.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon" style="color: var(--warn); background: rgba(251, 191, 36, 0.1);"><i class="ph ph-chart-line-up"></i></div>
+            <h3 class="feature-title">Efficient Operations</h3>
+            <p class="feature-desc">For NGOs on the ground: manage records, track needs, and communicate with sponsors all from a centralized, modern dashboard.</p>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    &copy; {% now "Y" %} CharityOS Tanzania. All rights reserved.
+</footer>
+
+</body>
+</html>

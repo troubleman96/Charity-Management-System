@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}Overview{% endblock %}
+{% block page_subtitle %}System performance & operations overview{% endblock %}
+
+{% block content %}
+<!-- KPI Grid -->
+<div class="kpi-grid">
+    <div class="kpi">
+        <div class="kpi-label">Available Funds</div>
+        <div class="kpi-value accent">{{ available_funds|currency }}</div>
+        <div class="kpi-sub">
+            <span class="up">↑ {{ mtd_growth|floatformat:1 }}%</span> vs last month
+        </div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Active Beneficiaries</div>
+        <div class="kpi-value">{{ active_beneficiaries }}</div>
+        <div class="kpi-sub">Across {{ active_regions }} regions</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Pending Requests</div>
+        <div class="kpi-value accent2">{{ pending_requests }}</div>
+        <div class="kpi-sub">Require admin approval</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Total Donors</div>
+        <div class="kpi-value">{{ total_donors }}</div>
+        <div class="kpi-sub">
+            <span class="up">↑ {{ new_donors_this_month }}</span> new this month
+        </div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- Chart Panel -->
+    <div class="panel">
+        <div class="panel-title">
+            Donation Trends
+            <small>Last 6 months</small>
+        </div>
+        <canvas id="donationChart" height="220"></canvas>
+    </div>
+
+    <!-- Allocation Panel -->
+    <div class="panel">
+        <div class="panel-title">
+            Fund Allocation
+            <small>By Category</small>
+        </div>
+        <div class="bars">
+            {% for alloc in allocation_breakdown %}
+            <div class="bar-row">
+                <div class="bar-label">{{ alloc.allocation_type|title }}</div>
+                <div class="bar-track">
+                    <div class="bar-fill" style="width: {{ alloc.percentage }}%; background: var(--accent{% if forloop.counter > 1 %}2{% endif %});"></div>
+                </div>
+                <div class="bar-val">{{ alloc.total|currency }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- Pending Requests Panel -->
+    <div class="panel">
+        <div class="panel-title">
+            Action Needed: Requests
+            <a href="{% url 'beneficiaries:requests' %}" class="btn-sm">View All</a>
+        </div>
+        <div class="req-list">
+            {% for req in recent_requests %}
+            <div class="req-item">
+                <div>
+                    <div class="req-name">{{ req.beneficiary.get_full_name }}</div>
+                    <div class="req-type">{{ req.get_request_type_display }} • {{ req.estimated_cost|currency }}</div>
+                </div>
+                <div class="req-actions">
+                    <form method="post" action="{% url 'beneficiaries:request_review' pk=req.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve">
+                        <button class="btn-approve" type="submit">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'beneficiaries:request_review' pk=req.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="reject">
+                        <button class="btn-reject" type="submit">Reject</button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div style="color: var(--muted); font-size: 12px; text-align: center; padding: 20px 0;">
+                No pending requests.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent Donations Table -->
+    <div class="panel">
+        <div class="panel-title">
+            Recent Donations
+            <a href="{% url 'donations:list' %}" class="btn-sm">View All</a>
+        </div>
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th>Donor</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donation in recent_donations %}
+                <tr>
+                    <td>{{ donation.donor.display_name|default:"Anonymous" }}</td>
+                    <td style="font-family: var(--font-mono)">
+                        {% if donation.donation_type == 'cash' %}
+                            {{ donation.amount|currency }}
+                        {% else %}
+                            In-Kind
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {{ donation.status|status_color }}">{{ donation.get_status_display }}</span>
+                    </td>
+                    <td style="color: var(--muted)">{{ donation.donation_date|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--muted);">No recent donations.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize Chart.js with data passed from the view
+    const ctx = document.getElementById('donationChart').getContext('2d');
+    
+    // Parse the JSON data passed from the view
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Donations (TZS)',
+                data: chartData.values,
+                borderColor: '#6ee7b7',
+                backgroundColor: 'rgba(110, 231, 183, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#16181c',
+                pointBorderColor: '#6ee7b7',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1c1f26',
+                    titleColor: '#7b8099',
+                    bodyColor: '#e8eaf0',
+                    borderColor: '#2a2d36',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return 'TZS ' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { 
+                        color: '#7b8099',
+                        font: { family: "'DM Mono', monospace", size: 10 },
+                        callback: function(value) {
+                            return value / 1000000 + 'M';
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#7b8099', font: { size: 11 } }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

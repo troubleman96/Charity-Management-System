@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CharityOS</title>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Base CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at top right, rgba(110, 231, 183, 0.05), transparent 40%), var(--bg);
+        }
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .auth-logo {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .auth-logo em {
+            color: var(--accent);
+            font-style: normal;
+        }
+        .auth-subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="auth-logo">Charity<em>OS</em></div>
+    <div class="auth-subtitle">Sign in to your account</div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" style="padding: 8px 12px; font-size: 12px; margin-bottom: 16px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.username.id_for_label }}">Email</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+        
+        <button type="submit" class="btn-primary btn-full">
+            Sign In <i class="ph ph-arrow-right"></i>
+        </button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted);">
+        Don't have an account? <a href="{% url 'accounts:register' %}" style="color: var(--accent2); font-weight: 500;">Register here</a>
+    </div>
+</div>
+
+</body>
+</html>

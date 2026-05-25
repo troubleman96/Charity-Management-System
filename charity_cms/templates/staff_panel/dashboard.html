@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Staff Dashboard{% endblock %}
+{% block page_title %}Staff Operations{% endblock %}
+{% block page_subtitle %}Manage beneficiaries and record donations{% endblock %}
+
+{% block content %}
+<div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="kpi">
+        <div class="kpi-label">Active Beneficiaries</div>
+        <div class="kpi-value accent">{{ active_beneficiaries }}</div>
+        <div class="kpi-sub">Total enrolled</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">My Requests</div>
+        <div class="kpi-value">{{ pending_requests }}</div>
+        <div class="kpi-sub">Pending approval</div>
+    </div>
+    
+    <div class="kpi">
+        <div class="kpi-label">Donations Logged</div>
+        <div class="kpi-value accent2">{{ donations_logged }}</div>
+        <div class="kpi-sub">By me this month</div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- Quick Actions Panel -->
+    <div class="panel">
+        <div class="panel-title">Quick Actions</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{% url 'beneficiaries:create' %}" class="btn-primary">
+                <i class="ph ph-user-plus"></i> Register Beneficiary
+            </a>
+            <a href="{% url 'donations:create' %}" class="btn-primary">
+                <i class="ph ph-receipt"></i> Log Donation
+            </a>
+            <a href="{% url 'beneficiaries:request_create' %}" class="btn-secondary">
+                <i class="ph ph-hand-coins"></i> Request Assistance
+            </a>
+            <a href="{% url 'beneficiaries:update_create' %}" class="btn-secondary">
+                <i class="ph ph-notebook"></i> Write Update
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Beneficiaries Panel -->
+    <div class="panel">
+        <div class="panel-title">
+            Recently Registered
+            <a href="{% url 'beneficiaries:list' %}" class="btn-sm">View All</a>
+        </div>
+        <table class="dt">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Date Enrolled</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ben in recent_beneficiaries %}
+                <tr>
+                    <td style="font-family: var(--font-mono); color: var(--accent2);">{{ ben.beneficiary_code }}</td>
+                    <td>{{ ben.get_full_name }}</td>
+                    <td style="color: var(--muted)">{{ ben.date_enrolled|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: var(--muted);">No recent beneficiaries.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Compose Message - CharityOS{% endblock %}
+{% block page_title %}Compose Message{% endblock %}
+{% block page_subtitle %}Send an internal message to a staff member or admin{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'communications:inbox' %}" class="btn-secondary">
+    <i class="ph ph-arrow-left"></i> Back to Inbox
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 800px;">
+    <form method="post" action="{% url 'communications:compose' %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.recipient.id_for_label }}">To</label>
+            {{ form.recipient }}
+            {% if form.recipient.errors %}
+                <div class="alert alert-error" style="margin-top: 8px;">{{ form.recipient.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.subject.id_for_label }}">Subject</label>
+            {{ form.subject }}
+            {% if form.subject.errors %}
+                <div class="alert alert-error" style="margin-top: 8px;">{{ form.subject.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="{{ form.body.id_for_label }}">Message</label>
+            {{ form.body }}
+            {% if form.body.errors %}
+                <div class="alert alert-error" style="margin-top: 8px;">{{ form.body.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 24px; text-align: right;">
+            <button type="submit" class="btn-primary">
+                <i class="ph ph-paper-plane-tilt"></i> Send Message
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

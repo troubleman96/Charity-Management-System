@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Message - CharityOS{% endblock %}
+{% block page_title %}Message Details{% endblock %}
+{% block page_subtitle %}From {{ msg.sender.get_full_name|default:msg.sender.username }}{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'communications:inbox' %}" class="btn-secondary">
+    <i class="ph ph-arrow-left"></i> Back to Inbox
+</a>
+<a href="{% url 'communications:compose' %}?reply_to={{ msg.sender.pk }}" class="btn-primary">
+    <i class="ph ph-arrow-u-up-left"></i> Reply
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 800px;">
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
+        <h2 style="font-size: 20px; margin-bottom: 16px; color: var(--text);">{{ msg.subject }}</h2>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="width: 40px; height: 40px; background: rgba(110, 231, 183, 0.1); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 600;">
+                    {{ msg.sender.username|make_list|first|upper }}
+                </div>
+                <div>
+                    <div style="font-weight: 500; color: var(--text);">{{ msg.sender.get_full_name|default:msg.sender.username }}</div>
+                    <div style="font-size: 12px; color: var(--muted);">to {% if msg.recipient == request.user %}me{% else %}{{ msg.recipient.get_full_name|default:msg.recipient.username }}{% endif %}</div>
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <div style="font-size: 13px; color: var(--muted);">{{ msg.created_at|date:"M d, Y, h:i A" }}</div>
+                {% if msg.is_read and msg.sender == request.user %}
+                <div style="font-size: 11px; color: var(--accent2); margin-top: 4px;">
+                    <i class="ph ph-check-double"></i> Read {{ msg.read_at|timesince }} ago
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div style="font-size: 15px; line-height: 1.6; color: #e8eaf0; white-space: pre-wrap; padding: 10px 0;">{{ msg.body }}</div>
+</div>
+{% endblock %}

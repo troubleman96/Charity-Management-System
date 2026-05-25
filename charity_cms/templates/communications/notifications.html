@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Notifications - CharityOS{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block page_subtitle %}Recent system alerts and updates{% endblock %}
+
+{% block header_actions %}
+<form method="post" action="{% url 'communications:mark_all_read' %}" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn-secondary">
+        <i class="ph ph-check-all"></i> Mark All as Read
+    </button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <div class="panel-title">
+        Your Notifications
+    </div>
+    
+    <div class="req-list">
+        {% for notif in notifications %}
+        <div class="req-item" style="{% if not notif.is_read %}background: rgba(110, 231, 183, 0.05); border-left: 2px solid var(--accent);{% endif %}">
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                <!-- Icon based on type -->
+                {% if notif.notification_type == 'donation_received' %}
+                <div style="font-size: 24px; color: var(--accent);">
+                    <i class="ph ph-wallet"></i>
+                </div>
+                {% elif notif.notification_type == 'low_funds' %}
+                <div style="font-size: 24px; color: var(--error);">
+                    <i class="ph ph-warning"></i>
+                </div>
+                {% elif notif.notification_type == 'request_rejected' %}
+                <div style="font-size: 24px; color: var(--error);">
+                    <i class="ph ph-x-circle"></i>
+                </div>
+                {% elif notif.notification_type == 'request_approved' %}
+                <div style="font-size: 24px; color: var(--accent2);">
+                    <i class="ph ph-check-circle"></i>
+                </div>
+                {% elif notif.notification_type == 'update_available' %}
+                <div style="font-size: 24px; color: var(--accent2);">
+                    <i class="ph ph-newspaper"></i>
+                </div>
+                {% else %}
+                <div style="font-size: 24px; color: var(--accent2);">
+                    <i class="ph ph-bell"></i>
+                </div>
+                {% endif %}
+
+                <div>
+                    <div class="req-name" style="margin-bottom: 4px;">
+                        {% if notif.link %}
+                            <a href="{% url 'communications:mark_read' pk=notif.pk %}" style="color: var(--text); text-decoration: none;">
+                                {{ notif.title }}
+                            </a>
+                        {% else %}
+                            {{ notif.title }}
+                        {% endif %}
+                        
+                        {% if not notif.is_read %}
+                            <span class="badge badge-info" style="margin-left: 8px;">New</span>
+                        {% endif %}
+                    </div>
+                    <div class="req-type" style="margin-bottom: 8px;">{{ notif.message }}</div>
+                    <div style="font-size: 11px; color: var(--muted);">{{ notif.created_at|timesince }} ago</div>
+                </div>
+            </div>
+            
+            <div class="req-actions">
+                {% if not notif.is_read and not notif.link %}
+                <form method="post" action="{% url 'communications:mark_read' pk=notif.pk %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-sm" style="background: transparent; border: 1px solid var(--border); color: var(--text);">
+                        Mark Read
+                    </button>
+                </form>
+                {% endif %}
+                
+                {% if notif.link %}
+                <a href="{% url 'communications:mark_read' pk=notif.pk %}" class="btn-primary" style="padding: 6px 12px; font-size: 12px;">
+                    View Details
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div style="padding: 40px; text-align: center; color: var(--muted);">
+            <i class="ph ph-bell-slash" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+            You don't have any notifications right now.
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div style="padding: 20px; text-align: center; border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 10px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">Previous</a>
+        {% endif %}
+        
+        <span style="font-size: 13px; color: var(--muted); align-self: center;">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

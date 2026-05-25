@@ -1,0 +1,1 @@
+# Beneficiaries app init

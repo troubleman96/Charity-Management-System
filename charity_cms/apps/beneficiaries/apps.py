@@ -1,0 +1,11 @@
+"""
+CharityOS — Beneficiaries App Configuration
+Manages orphan beneficiary profiles, assistance requests, donor links, and progress updates.
+"""
+from django.apps import AppConfig
+
+
+class BeneficiariesConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.beneficiaries'
+    verbose_name = 'Beneficiary Management'

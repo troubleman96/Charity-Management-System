@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Profile Settings - CharityOS{% endblock %}
+{% block page_title %}Profile Settings{% endblock %}
+{% block page_subtitle %}Manage your personal information and account preferences{% endblock %}
+
+{% block content %}
+<div class="panel" style="max-width: 800px;">
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div style="display: flex; gap: 24px; align-items: flex-start;">
+            <!-- Avatar Section -->
+            <div style="flex-shrink: 0; text-align: center;">
+                <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--border); overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; border: 2px solid var(--accent);">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <span style="font-size: 40px; color: var(--text); font-weight: 600;">
+                            {{ user.get_full_name|default:user.username|make_list|first|upper }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Form Fields -->
+            <div style="flex-grow: 1;">
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" style="margin-bottom: 24px;">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="grid2">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.first_name.id_for_label }}">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="alert alert-error" style="margin-top: 8px;">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.last_name.id_for_label }}">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="alert alert-error" style="margin-top: 8px;">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.email.id_for_label }}">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="alert alert-error" style="margin-top: 8px;">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                        <div class="alert alert-error" style="margin-top: 8px;">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="color: var(--muted); font-size: 13px;">
+                        Role: <span style="color: var(--accent2); font-weight: 600; text-transform: uppercase;">{{ user.profile.role }}</span>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="ph ph-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

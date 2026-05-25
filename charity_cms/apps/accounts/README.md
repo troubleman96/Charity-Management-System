@@ -1,26 +1,106 @@
-# Accounts App
+# Accounts App (`apps/accounts/`)
 
-The `accounts` application manages user authentication, profile extension, and user registration flows.
+> User authentication, registration, profile management, and the UserProfile extension model.
 
-## Concept
-CharityOS relies on Django's robust built-in `User` model for core authentication (handling password hashing, sessions, etc.). However, standard Django Users lack fields necessary for our SaaS, such as explicit roles (`admin`, `staff`, `donor`) and phone numbers. 
+---
 
-To solve this, the `accounts` app implements a `UserProfile` model that extends the `User` model via a One-to-One relationship.
+## 📁 File Structure
+```
+apps/accounts/
+├── __init__.py
+├── apps.py             ← App config (registers signals)
+├── models.py           ← UserProfile model (OneToOne → User)
+├── signals.py          ← Auto-creates UserProfile on User creation
+├── forms.py            ← Login, registration, and profile forms
+├── views.py            ← Login, logout, register, profile views
+├── urls.py             ← /accounts/ routes
+├── admin.py            ← Django admin registration
+└── README.md           ← THIS FILE
+```
 
-## Key Components
+---
 
-### Models
-- **`UserProfile`**: Contains `user` (O2O), `role`, `phone_number`, and `profile_picture`.
+## Concept: Why Not a Custom User Model?
+Django offers two ways to extend the User:
+1. **Custom User Model** — Replace `User` entirely (complex, requires migration from scratch).
+2. **OneToOne Profile** — Keep the default `User` and add a linked `UserProfile` for extra fields.
 
-### Signals (`signals.py`)
-- **`create_user_profile`**: Hooked to the `post_save` signal of the `User` model. Whenever a `User` is created, it automatically generates a blank `UserProfile` to ensure database integrity.
-- **`save_user_profile`**: Hooked to `post_save` of `User` to save the profile whenever the user is saved.
+CharityOS uses option 2 because:
+- It's simpler and less error-prone.
+- Django's built-in admin, permissions, and third-party libraries work out of the box.
+- The role system (`admin`/`staff`/`donor`) is cleanly separated from auth credentials.
 
-### Forms (`forms.py`)
-- **`CustomUserCreationForm`**: Extends Django's user creation form to capture first name, last name, and email during registration.
-- **`UserProfileForm`**: Captures extended profile data.
-- **`DonorRegistrationForm`**: A specialized form used on the public landing page. It creates the `User`, the `UserProfile` (forcing role to `donor`), and initializes the `Donor` record in the `donors` app in a single transaction.
+---
 
-### Views (`views.py`)
-- **`CustomLoginView`**: Handles login, injects CSS classes for styling, and automatically writes an `AuditLog` entry tracking the IP address upon successful login.
-- **`DonorRegistrationView`**: Publicly accessible view for new donors to sign up.
+## Models
+
+### `UserProfile` — Extended User Data
+Auto-created for every `User` via the `post_save` signal.
+
+| Field | Type | Constraints | Description |
+|-------|------|------------|-------------|
+| `user` | OneToOneField → `auth.User` | CASCADE, `related_name='profile'` | The Django auth user this extends |
+| `role` | CharField(20) | choices: `admin`, `staff`, `donor` | Determines dashboard and feature access |
+| `phone` | CharField(20) | blank=True | Contact phone (e.g., +255712345678) |
+| `avatar` | ImageField | blank=True, uploads to `avatars/` | Profile picture |
+| `created_at` | DateTimeField | auto_now_add | Record creation timestamp |
+| `updated_at` | DateTimeField | auto_now | Last modification timestamp |
+
+**Indexes:** `role` field is indexed for fast filtering.
+
+**Helper Properties:**
+- `is_admin` → `self.role == 'admin'`
+- `is_staff_member` → `self.role == 'staff'`
+- `is_donor` → `self.role == 'donor'`
+
+**How to access from a User:**
+```python
+user = request.user
+role = user.profile.role         # 'admin', 'staff', or 'donor'
+phone = user.profile.phone       # '+255712345678'
+```
+
+---
+
+## Signals (`signals.py`)
+
+Two signals are connected to the `User` model's `post_save` event:
+
+1. **`create_user_profile`** — When a new `User` is created (`created=True`), automatically creates a blank `UserProfile` with default role `donor`.
+2. **`save_user_profile`** — When a `User` is saved, also saves its linked `UserProfile`.
+
+**Why?** This ensures every User ALWAYS has a UserProfile. Without this, accessing `user.profile` would crash with a `RelatedObjectDoesNotExist` error.
+
+---
+
+## Forms (`forms.py`)
+
+| Form | Fields | Usage |
+|------|--------|-------|
+| `CustomUserCreationForm` | `username`, `email`, `first_name`, `last_name`, `password1`, `password2` | Standard Django registration with extra name fields |
+| `UserProfileForm` | `phone`, `avatar` | Profile update page |
+| `DonorRegistrationForm` | Combined user + profile + donor fields | Public donor self-registration |
+
+**`DonorRegistrationForm` workflow:**
+1. Creates the `User` record.
+2. The signal creates the `UserProfile` (role defaults to `donor`).
+3. The form's `save()` method creates the `Donor` record in the `donors` app.
+4. All three records are created in a single database transaction.
+
+---
+
+## Views (`views.py`)
+
+| View | URL | Auth | Description |
+|------|-----|------|-------------|
+| `CustomLoginView` | `/accounts/login/` | Public | Login form, writes AuditLog on success (tracks IP) |
+| `CustomLogoutView` | `/accounts/logout/` | Auth | Destroys session, redirects to login |
+| `DonorRegistrationView` | `/accounts/register/` | Public | Donor self-registration using `DonorRegistrationForm` |
+| `ProfileView` | `/accounts/profile/` | Auth | View/edit profile using `UserProfileForm` |
+
+---
+
+## Templates Used
+- `templates/accounts/login.html` — Dark-themed login form with CSS classes from the design system.
+- `templates/accounts/register.html` — Multi-section registration form (Personal Info → Contact).
+- `templates/accounts/profile.html` — Profile view/edit page.

@@ -17,7 +17,8 @@ def create_user_profile(sender, instance, created, **kwargs):
     Default role is 'donor' (most common registration type).
     """
     if created:
-        UserProfile.objects.create(user=instance, role='donor')
+        role = 'admin' if instance.is_superuser else 'donor'
+        UserProfile.objects.create(user=instance, role=role)
 
 
 @receiver(post_save, sender=User)

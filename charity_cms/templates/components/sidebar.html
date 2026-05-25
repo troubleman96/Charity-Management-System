@@ -6,7 +6,7 @@
 
     {% if user.profile.is_admin %}
         <div class="nav-section">Management</div>
-        <a href="{% url 'admin_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+        <a href="{% url 'admin_panel:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' and 'admin' in request.path %}active{% endif %}">
             <i class="ph ph-squares-four"></i> Overview
         </a>
         <a href="{% url 'beneficiaries:list' %}" class="nav-item {% if 'beneficiaries' in request.path %}active{% endif %}">
@@ -32,7 +32,7 @@
     
     {% elif user.profile.is_staff_member %}
         <div class="nav-section">Operations</div>
-        <a href="{% url 'staff_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'staff_dashboard' %}active{% endif %}">
+        <a href="{% url 'staff_panel:dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' and 'staff' in request.path %}active{% endif %}">
             <i class="ph ph-squares-four"></i> Dashboard
         </a>
         <a href="{% url 'beneficiaries:list' %}" class="nav-item {% if 'beneficiaries' in request.path %}active{% endif %}">

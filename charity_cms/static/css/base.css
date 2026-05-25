@@ -1,0 +1,76 @@
+/*
+ * CharityOS — Base CSS
+ * Design tokens, reset, and core typography
+ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Colors - Dark Theme */
+  --bg: #0e0f11;
+  --surface: #16181c;
+  --card: #1c1f26;
+  --border: #2a2d36;
+  
+  /* Text */
+  --text: #e8eaf0;
+  --muted: #7b8099;
+  
+  /* Accents */
+  --accent: #6ee7b7;
+  --accent2: #818cf8;
+  
+  /* Status */
+  --danger: #f87171;
+  --warn: #fbbf24;
+  --success: #34d399;
+  
+  /* Typography */
+  --font: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+.main {
+  background: var(--bg);
+  padding: 24px;
+  overflow: auto;
+  max-height: 100vh;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}

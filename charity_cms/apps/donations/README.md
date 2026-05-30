@@ -77,3 +77,29 @@ Nightly cron: sums unallocated cash; creates admin Notification if below thresho
 | `DonationListView` | `/donations/` | Paginated, filterable by type/status |
 | `DonationCreateView` | `/donations/create/` | JS toggles cash vs in-kind fields |
 | `DonationDetailView` | `/donations/<pk>/` | Detail with allocation history |
+| `AllocationCreateView` | `/donations/<pk>/allocate/` | Admin-only fund allocation form |
+
+## Templates
+
+| Template | Status | Description |
+|----------|--------|-------------|
+| `donations/list.html` | ✅ Complete | Filterable donation list with pagination |
+| `donations/form.html` | ✅ Complete | Cash/in-kind toggle form |
+| `donations/detail.html` | ✅ Complete | Full donation detail with fund summary and allocations |
+| `donations/allocate_form.html` | ✅ Complete | Admin fund allocation form |
+| `donations/receipt_pdf.html` | ✅ Complete | WeasyPrint PDF receipt template |
+| `emails/donation_receipt.html` | ✅ Complete | HTML email receipt for donors |
+
+## Implementation Status
+
+| Component | Status |
+|-----------|--------|
+| Donation model (all 3) | ✅ Complete |
+| Donation forms | ✅ Complete |
+| List / Create / Detail views | ✅ Complete |
+| Fund allocation view | ✅ Complete |
+| Celery receipt task | ✅ Complete |
+| Low-funds alert task | ✅ Complete |
+| PDF receipt template | ✅ Complete |
+| Email receipt template | ✅ Complete |
+| Django admin | ✅ Complete |

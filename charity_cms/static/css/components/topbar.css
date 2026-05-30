@@ -1,19 +1,22 @@
-/* CharityOS — Topbar component */
+/* CharityOS — Topbar */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
 
 .topbar-title {
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -.3px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text);
 }
 
 .topbar-subtitle {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 2px;
 }
@@ -21,5 +24,82 @@
 .topbar-right {
   display: flex;
   align-items: center;
+  gap: 6px;
+}
+
+/* Icon-only button */
+.btn-icon {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.btn-icon:hover {
+  color: var(--text);
+  background: rgba(128, 128, 128, 0.1);
+  border-color: var(--muted);
+}
+
+/* Notification dot badge */
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+/* User profile area */
+.topbar-user {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.topbar-user:hover {
+  background: rgba(128, 128, 128, 0.08);
+  border-color: var(--muted);
+}
+
+.topbar-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.topbar-user-role {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: capitalize;
+  line-height: 1.3;
 }

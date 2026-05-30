@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Assistance Requests{% endblock %}
+{% block page_title %}Assistance Requests{% endblock %}
+{% block page_subtitle %}Review and manage beneficiary assistance requests{% endblock %}
+
+{% block content %}
+
+<!-- Filter bar -->
+<div class="panel" style="margin-bottom:20px;">
+    <form method="get" style="display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap;">
+        <div class="form-group" style="margin:0; min-width:180px;">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-input">
+                <option value="">All Statuses</option>
+                {% for val, label in status_choices %}
+                    <option value="{{ val }}" {% if current_status == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn-secondary"><i class="ph ph-funnel"></i> Filter</button>
+        {% if current_status %}
+        <a href="{% url 'beneficiaries:requests' %}" class="btn-secondary">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Requests table -->
+<div class="panel">
+    <div class="panel-title">
+        Assistance Requests
+        {% if user.profile.is_staff_member %}
+        <a href="{% url 'beneficiaries:request_create' %}" class="btn-sm"><i class="ph ph-plus"></i> New Request</a>
+        {% endif %}
+    </div>
+
+    <table class="dt">
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Beneficiary</th>
+                <th>Type</th>
+                <th>Estimated Cost</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>
+                    <span class="font-mono" style="color:var(--accent2); font-size:12px;">{{ req.request_ref }}</span>
+                </td>
+                <td>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div class="avatar avatar-green" style="width:26px; height:26px; font-size:11px;">
+                            {{ req.beneficiary.first_name|first }}
+                        </div>
+                        <a href="{% url 'beneficiaries:detail' req.beneficiary.pk %}" style="font-weight:600; font-size:13px;">
+                            {{ req.beneficiary.get_full_name }}
+                        </a>
+                    </div>
+                </td>
+                <td>{{ req.get_request_type_display }}</td>
+                <td class="font-mono" style="font-size:13px;">
+                    {% if req.estimated_cost %}{{ req.estimated_cost|currency }}{% else %}&mdash;{% endif %}
+                </td>
+                <td>
+                    <span class="badge {{ req.status|status_color }}">{{ req.get_status_display }}</span>
+                </td>
+                <td style="color:var(--muted); font-size:12px;">{{ req.created_at|date:"M d, Y" }}</td>
+                <td>
+                    {% if user.profile.is_admin and req.status == 'pending' %}
+                    <div style="display:flex; gap:6px;">
+                        <form method="post" action="{% url 'beneficiaries:request_review' req.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn-approve" type="submit" title="Approve">
+                                <i class="ph ph-check"></i> Approve
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'beneficiaries:request_review' req.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button class="btn-reject" type="submit" title="Reject">
+                                <i class="ph ph-x"></i> Reject
+                            </button>
+                        </form>
+                    </div>
+                    {% elif req.status == 'approved' and user.profile.is_admin %}
+                    <span style="font-size:12px; color:var(--muted);">Ready to allocate</span>
+                    {% elif req.status == 'fulfilled' %}
+                    <span style="font-size:12px; color:var(--success);">Fulfilled</span>
+                    {% else %}
+                    <span style="font-size:12px; color:var(--muted);">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center; padding:48px 0; color:var(--muted);">
+                    <i class="ph ph-clipboard-text" style="font-size:40px; display:block; margin-bottom:10px; opacity:0.25;"></i>
+                    No assistance requests found.
+                    {% if user.profile.is_staff_member %}
+                    <a href="{% url 'beneficiaries:request_create' %}" style="display:block; margin-top:8px; color:var(--accent2);">Submit the first request</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}" class="page-btn">
+                <i class="ph ph-caret-left"></i>
+            </a>
+        {% endif %}
+        <span style="font-size:12px; color:var(--muted);">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}" class="page-btn">
+                <i class="ph ph-caret-right"></i>
+            </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

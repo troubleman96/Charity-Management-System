@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}{{ donation.donation_ref }}{% endblock %}
+{% block page_title %}{{ donation.donation_ref }}{% endblock %}
+{% block page_subtitle %}
+    {{ donation.get_donation_type_display }} donation &mdash;
+    {{ donation.donation_date|date:"M d, Y" }} &mdash;
+    <span class="badge {{ donation.status|status_color }}">{{ donation.get_status_display }}</span>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:flex-end; margin-bottom:16px; gap:10px;">
+    <a href="{% url 'donations:list' %}" class="btn-secondary"><i class="ph ph-arrow-left"></i> Back</a>
+    {% if user.profile.is_admin and donation.donation_type == 'cash' and donation.remaining_amount > 0 %}
+        <a href="{% url 'donations:allocate' donation.pk %}" class="btn-primary"><i class="ph ph-arrows-split"></i> Allocate Funds</a>
+    {% endif %}
+</div>
+
+<div class="grid2" style="grid-template-columns: 1.2fr 1fr;">
+
+    <!-- Left: Donation details -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+        <!-- Core info -->
+        <div class="panel">
+            <div class="panel-title">Donation Details</div>
+
+            <div class="form-row" style="gap:12px;">
+                <div class="detail-field">
+                    <div class="detail-label">Reference</div>
+                    <div class="detail-value font-mono" style="color:var(--accent2);">{{ donation.donation_ref }}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Type</div>
+                    <div class="detail-value">{{ donation.get_donation_type_display }}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Date Received</div>
+                    <div class="detail-value">{{ donation.donation_date|date:"F j, Y" }}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">
+                        <span class="badge {{ donation.status|status_color }}">{{ donation.get_status_display }}</span>
+                    </div>
+                </div>
+
+                {% if donation.donation_type == 'cash' %}
+                <div class="detail-field">
+                    <div class="detail-label">Amount</div>
+                    <div class="detail-value font-mono" style="font-size:20px; color:var(--accent);">{{ donation.amount|currency }}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Payment Method</div>
+                    <div class="detail-value">{{ donation.get_payment_method_display }}</div>
+                </div>
+                {% if donation.transaction_reference %}
+                <div class="detail-field" style="grid-column:1/-1;">
+                    <div class="detail-label">Transaction Reference</div>
+                    <div class="detail-value font-mono">{{ donation.transaction_reference }}</div>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="detail-field" style="grid-column:1/-1;">
+                    <div class="detail-label">Items Description</div>
+                    <div class="detail-value">{{ donation.in_kind_description }}</div>
+                </div>
+                {% if donation.in_kind_estimated_value %}
+                <div class="detail-field">
+                    <div class="detail-label">Estimated Value</div>
+                    <div class="detail-value font-mono" style="color:var(--accent);">{{ donation.in_kind_estimated_value|currency }}</div>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% if donation.purpose %}
+                <div class="detail-field" style="grid-column:1/-1;">
+                    <div class="detail-label">Purpose</div>
+                    <div class="detail-value">{{ donation.purpose }}</div>
+                </div>
+                {% endif %}
+
+                {% if donation.notes %}
+                <div class="detail-field" style="grid-column:1/-1;">
+                    <div class="detail-label">Internal Notes</div>
+                    <div class="detail-value" style="color:var(--muted);">{{ donation.notes }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Donor -->
+        <div class="panel">
+            <div class="panel-title">Donor</div>
+            {% if donation.donor %}
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div class="avatar avatar-blue" style="width:48px;height:48px;font-size:18px;">
+                    {{ donation.donor.display_name|first }}
+                </div>
+                <div>
+                    <div style="font-size:15px; font-weight:600;">{{ donation.donor.display_name }}</div>
+                    <div style="font-size:13px; color:var(--muted);">{{ donation.donor.user.email }}</div>
+                    {% if donation.donor.organization %}
+                    <div style="font-size:12px; color:var(--muted);">{{ donation.donor.organization }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div style="color:var(--muted); font-size:13px;">Anonymous donation</div>
+            {% endif %}
+        </div>
+
+        <!-- Receipt -->
+        <div class="panel">
+            <div class="panel-title">Receipt</div>
+            {% if donation.receipt %}
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <div class="detail-label">Receipt Number</div>
+                    <div class="detail-value font-mono">{{ donation.receipt.receipt_number }}</div>
+                    <div style="font-size:12px; color:var(--muted); margin-top:4px;">
+                        Generated: {{ donation.receipt.created_at|date:"M d, Y" }}
+                        {% if donation.receipt.email_sent %}
+                            &mdash; <span style="color:var(--success);">Email sent</span>
+                        {% else %}
+                            &mdash; <span style="color:var(--warn);">Email pending</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if donation.receipt.pdf_file %}
+                <a href="{{ donation.receipt.pdf_file.url }}" class="btn-sm" target="_blank">
+                    <i class="ph ph-file-pdf"></i> Download
+                </a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div style="color:var(--muted); font-size:13px;">No receipt generated yet.</div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Right: Allocations -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+        {% if donation.donation_type == 'cash' %}
+        <!-- Fund summary -->
+        <div class="panel">
+            <div class="panel-title">Fund Summary</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+                    <span style="font-size:13px; color:var(--muted);">Total Received</span>
+                    <span class="font-mono" style="font-weight:700; font-size:15px;">{{ donation.amount|currency }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+                    <span style="font-size:13px; color:var(--muted);">Allocated</span>
+                    <span class="font-mono" style="color:var(--accent2);">{{ donation.allocated_amount|currency }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
+                    <span style="font-size:13px; font-weight:600;">Remaining</span>
+                    <span class="font-mono" style="color:var(--accent); font-weight:700; font-size:16px;">{{ donation.remaining_amount|currency }}</span>
+                </div>
+            </div>
+            {% if user.profile.is_admin and donation.remaining_amount > 0 %}
+            <a href="{% url 'donations:allocate' donation.pk %}" class="btn-primary" style="width:100%; margin-top:16px; justify-content:center;">
+                <i class="ph ph-arrows-split"></i> Allocate Funds
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Allocations list -->
+        <div class="panel">
+            <div class="panel-title">
+                Fund Allocations
+                <span class="badge badge-info">{{ allocations|length }}</span>
+            </div>
+            <div class="req-list">
+                {% for alloc in allocations %}
+                <div class="req-item" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <div class="req-name">{{ alloc.get_allocation_type_display }}</div>
+                        <span class="font-mono" style="font-size:13px; font-weight:700; color:var(--accent);">{{ alloc.amount|currency }}</span>
+                    </div>
+                    {% if alloc.beneficiary %}
+                    <div class="req-type"><i class="ph ph-user"></i> {{ alloc.beneficiary.get_full_name }}</div>
+                    {% endif %}
+                    {% if alloc.description %}
+                    <div style="font-size:12px; color:var(--muted);">{{ alloc.description }}</div>
+                    {% endif %}
+                    <div style="font-size:11px; color:var(--muted); margin-top:2px;">
+                        By {{ alloc.allocated_by.get_full_name|default:alloc.allocated_by.username }} &mdash; {{ alloc.allocated_at|date:"M d, Y" }}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="color:var(--muted); font-size:13px; text-align:center; padding:24px 0;">
+                    <i class="ph ph-arrows-split" style="font-size:32px; display:block; margin-bottom:8px; opacity:0.3;"></i>
+                    No fund allocations yet.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="panel">
+            <div class="panel-title">Metadata</div>
+            <div class="detail-field">
+                <div class="detail-label">Recorded By</div>
+                <div class="detail-value">{{ donation.recorded_by.get_full_name|default:donation.recorded_by.username|default:"—" }}</div>
+            </div>
+            <div class="detail-field">
+                <div class="detail-label">Recorded At</div>
+                <div class="detail-value">{{ donation.created_at|date:"F j, Y, g:i A" }}</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

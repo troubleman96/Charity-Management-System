@@ -1,3 +1,9 @@
+# core — Shared Infrastructure
+
+> **Status: Fully Implemented** — All models, views, utilities, and management commands are complete.
+
+---
+
 # Core App (`apps/core/`)
 
 > System-wide infrastructure: audit logging, role-based access control, template utilities, and dashboard routing.
@@ -125,3 +131,38 @@ Injects variables into EVERY template without passing them manually:
 | `DashboardRedirectView` | `/dashboard/` | Checks user role, redirects to the correct dashboard |
 | `AdminDashboardView` | `/admin-panel/` | Admin KPIs: total donations, beneficiaries, pending requests, charts |
 | `StaffDashboardView` | `/staff/` | Staff quick actions and pending items |
+
+---
+
+## Seed Users Management Command
+
+Creates demo accounts for testing every role without manual setup:
+
+```bash
+python manage.py seed_users           # Create demo users
+python manage.py seed_users --reset   # Delete and recreate all
+python manage.py seed_users --quiet   # No terminal output
+```
+
+| Role      | Username    | Password  | Email                  |
+|-----------|-------------|-----------|------------------------|
+| admin     | admin_demo  | Admin@123 | admin@charityos.demo   |
+| staff     | staff_demo  | Staff@123 | staff@charityos.demo   |
+| donor     | donor_demo  | Donor@123 | donor@charityos.demo   |
+| superuser | superadmin  | Super@123 | super@charityos.demo   |
+
+---
+
+## Implementation Status
+
+| Component | Status |
+|-----------|--------|
+| AuditLog model | ✅ Complete |
+| RBAC mixins & decorator | ✅ Complete |
+| Admin dashboard (KPIs + Chart.js) | ✅ Complete |
+| Staff dashboard | ✅ Complete |
+| Context processor | ✅ Complete |
+| Template tags (`status_color`, `currency`, `initials`) | ✅ Complete |
+| `log_action()` utility | ✅ Complete |
+| `seed_users` management command | ✅ Complete |
+| Landing page | ✅ Complete |

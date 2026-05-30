@@ -1,30 +1,34 @@
-/* CharityOS — Badges & Pills component */
+/* CharityOS — Badges & Avatars */
 .badge {
   font-size: 11px;
   padding: 3px 10px;
   border-radius: 20px;
-  font-weight: 500;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
 }
 
-.badge-info { background: rgba(129, 140, 248, .15); color: var(--accent2); }
-.badge-warn { background: rgba(251, 191, 36, .12); color: var(--warn); }
-.badge-danger { background: rgba(248, 113, 113, .12); color: var(--danger); }
-.badge-success { background: rgba(52, 211, 153, .15); color: var(--success); }
+.badge-info    { background: var(--accent2-dim); color: var(--accent2); }
+.badge-warn    { background: var(--warn-dim);    color: var(--warn); }
+.badge-danger  { background: var(--danger-dim);  color: var(--danger); }
+.badge-success { background: var(--success-dim); color: var(--success); }
+.badge-muted   { background: rgba(128,128,128,0.1); color: var(--muted); }
 
+/* Pill (smaller variant) */
 .pill {
   display: inline-block;
   font-size: 10px;
   padding: 2px 8px;
   border-radius: 20px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.pill-green { background: rgba(52, 211, 153, .12); color: var(--success); }
-.pill-blue { background: rgba(129, 140, 248, .12); color: var(--accent2); }
-.pill-orange { background: rgba(251, 191, 36, .12); color: var(--warn); }
-.pill-red { background: rgba(248, 113, 113, .12); color: var(--danger); }
+.pill-green  { background: var(--success-dim); color: var(--success); }
+.pill-blue   { background: var(--accent2-dim); color: var(--accent2); }
+.pill-orange { background: var(--warn-dim);    color: var(--warn); }
+.pill-red    { background: var(--danger-dim);  color: var(--danger); }
 
-/* Status dot */
+/* Notification dot */
 .notif-dot {
   width: 7px;
   height: 7px;
@@ -35,17 +39,19 @@
   vertical-align: middle;
 }
 
+/* Avatar circles */
 .avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
-.avatar-blue { background: rgba(129, 140, 248, .2); color: var(--accent2); }
-.avatar-green { background: rgba(110, 231, 183, .2); color: var(--accent); }
-.avatar-orange { background: rgba(251, 191, 36, .15); color: var(--warn); }
+.avatar-blue   { background: var(--accent2-dim); color: var(--accent2); }
+.avatar-green  { background: var(--accent-dim);  color: var(--accent); }
+.avatar-orange { background: var(--warn-dim);    color: var(--warn); }

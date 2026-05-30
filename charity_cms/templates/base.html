@@ -1,42 +1,46 @@
 {% load static charity_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard{% endblock %} - CharityOS</title>
-    
+    <title>{% block title %}Dashboard{% endblock %} — CharityOS</title>
+
+    <!-- Apply saved theme immediately to avoid flash -->
+    <script>
+        (function() {
+            var t = localStorage.getItem('charity-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
     <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js" defer></script>
 
-    <!-- Base CSS -->
+    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    
+
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="shell">
-        <!-- Sidebar Navigation -->
         {% include "components/sidebar.html" %}
 
-        <!-- Main Content Area -->
         <main class="main">
-            <!-- Topbar (User menu, Notifications) -->
             {% include "components/topbar.html" %}
 
-            <!-- Flash Messages -->
             {% if messages %}
-                <div class="messages">
+                <div class="flash-stack">
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }}">
                             <span>{{ message }}</span>
-                            <button onclick="this.parentElement.style.display='none'" class="btn-action">
+                            <button onclick="this.parentElement.remove()" class="btn-icon" style="color:inherit;">
                                 <i class="ph ph-x"></i>
                             </button>
                         </div>
@@ -44,19 +48,54 @@
                 </div>
             {% endif %}
 
-            <!-- Page Content -->
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
         </main>
     </div>
 
-    <!-- Base JavaScript -->
     <script>
-        // Setup CSRF token for HTMX
-        document.body.addEventListener('htmx:configRequest', (event) => {
-            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-        });
+        /* ── CharityOS global JS ── */
+        const CharityOS = {
+            toggleTheme() {
+                const html = document.documentElement;
+                const current = html.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('charity-theme', next);
+                this._syncThemeIcon(next);
+            },
+
+            _syncThemeIcon(theme) {
+                const light = document.getElementById('theme-icon-light');
+                const dark  = document.getElementById('theme-icon-dark');
+                if (!light || !dark) return;
+                if (theme === 'light') {
+                    light.style.display = 'inline';
+                    dark.style.display  = 'none';
+                } else {
+                    light.style.display = 'none';
+                    dark.style.display  = 'inline';
+                }
+            },
+
+            init() {
+                const saved = localStorage.getItem('charity-theme') || 'dark';
+                this._syncThemeIcon(saved);
+
+                /* HTMX CSRF */
+                document.body.addEventListener('htmx:configRequest', (e) => {
+                    e.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+                });
+
+                /* Auto-dismiss alerts after 5 s */
+                document.querySelectorAll('.alert').forEach(el => {
+                    setTimeout(() => el.remove(), 5000);
+                });
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => CharityOS.init());
     </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

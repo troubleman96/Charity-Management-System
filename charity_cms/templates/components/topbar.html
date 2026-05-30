@@ -5,23 +5,34 @@
         <div class="topbar-subtitle">{% block page_subtitle %}Welcome back, {{ user.first_name|default:user.username }}{% endblock %}</div>
     </div>
     <div class="topbar-right">
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="btn-icon" title="Toggle theme" onclick="CharityOS.toggleTheme()">
+            <i class="ph ph-sun" id="theme-icon-light" style="display:none;"></i>
+            <i class="ph ph-moon" id="theme-icon-dark"></i>
+        </button>
+
         <!-- Notifications -->
-        <a href="{% url 'communications:notifications' %}" class="btn-secondary" style="padding: 8px 12px; border-radius: 50%;">
+        <a href="{% url 'communications:notifications' %}" class="btn-icon" title="Notifications" style="position:relative;">
             <i class="ph ph-bell"></i>
             {% if unread_notifications_count %}
-                <div class="notif-dot" style="position: absolute; margin-left: -5px; margin-top: -5px;"></div>
+                <span class="notif-badge">{{ unread_notifications_count }}</span>
             {% endif %}
         </a>
 
-        <!-- User Dropdown (simple link for now) -->
-        <a href="{% url 'accounts:profile' %}" class="btn-secondary" style="border: none; background: transparent;">
-            <div class="avatar avatar-blue">{{ user|initials }}</div>
-            <span style="font-size: 12px; font-weight: 500; margin-left: 8px;">{{ user.first_name|default:user.username }}</span>
+        <!-- User info + Profile link -->
+        <a href="{% url 'accounts:profile' %}" class="topbar-user">
+            <div class="avatar avatar-green">{{ user|initials }}</div>
+            <div class="topbar-user-info">
+                <span class="topbar-user-name">{{ user.get_full_name|default:user.username }}</span>
+                <span class="topbar-user-role">{{ user.profile.get_role_display|default:"User" }}</span>
+            </div>
         </a>
-        
-        <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+
+        <!-- Logout -->
+        <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="btn-action" title="Logout">
+            <button type="submit" class="btn-icon" title="Logout">
                 <i class="ph ph-sign-out"></i>
             </button>
         </form>

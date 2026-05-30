@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Donation Receipt — {{ receipt.receipt_number }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1a1d27;
+            background: #fff;
+            padding: 0;
+        }
+
+        .page {
+            padding: 48px 56px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #059669;
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+        .org-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #059669;
+            letter-spacing: -0.3px;
+        }
+
+        .org-tagline {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .receipt-badge {
+            text-align: right;
+        }
+
+        .receipt-badge h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f1117;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .receipt-number {
+            font-size: 13px;
+            color: #4f46e5;
+            font-family: monospace;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Donor & Donation info */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .info-box h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 12px;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-row .label { color: #6b7280; }
+        .info-row .value { font-weight: 600; color: #0f1117; }
+
+        /* Amount highlight */
+        .amount-section {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            border: 1.5px solid #6ee7b7;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .amount-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #059669;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .amount-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #047857;
+            letter-spacing: -1px;
+            font-family: monospace;
+        }
+
+        .amount-words {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* Notes */
+        .notes-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 28px;
+            font-size: 12px;
+            color: #374151;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .footer-note {
+            font-size: 11px;
+            color: #9ca3af;
+            max-width: 60%;
+            line-height: 1.5;
+        }
+
+        .signature-area {
+            text-align: center;
+        }
+
+        .signature-line {
+            border-top: 1.5px solid #d1d5db;
+            width: 160px;
+            margin: 0 auto 4px;
+        }
+
+        .signature-label {
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* In-kind table */
+        .inkind-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .inkind-table th {
+            background: #f3f4f6;
+            padding: 8px 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #6b7280;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .inkind-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 12px;
+        }
+
+        .watermark {
+            text-align: center;
+            color: #d1d5db;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <div class="org-name">{{ org_name|default:"CharityOS" }}</div>
+            <div class="org-tagline">Official Donation Receipt</div>
+        </div>
+        <div class="receipt-badge">
+            <h2>Receipt</h2>
+            <div class="receipt-number">{{ receipt.receipt_number }}</div>
+            <div style="font-size:11px; color:#6b7280; margin-top:4px;">
+                Issued: {{ receipt.created_at|date:"F j, Y" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+        <div class="info-box">
+            <h4>Donor Information</h4>
+            {% with d=donation.donor %}
+            {% if d %}
+            <div class="info-row"><span class="label">Name</span><span class="value">{{ d.display_name }}</span></div>
+            <div class="info-row"><span class="label">Email</span><span class="value">{{ d.user.email }}</span></div>
+            {% if d.organization %}
+            <div class="info-row"><span class="label">Organisation</span><span class="value">{{ d.organization }}</span></div>
+            {% endif %}
+            {% if d.national_id %}
+            <div class="info-row"><span class="label">ID/TIN</span><span class="value">{{ d.national_id }}</span></div>
+            {% endif %}
+            {% else %}
+            <div class="info-row"><span class="label">Name</span><span class="value">Anonymous</span></div>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="info-box">
+            <h4>Donation Details</h4>
+            <div class="info-row"><span class="label">Reference</span><span class="value">{{ donation.donation_ref }}</span></div>
+            <div class="info-row"><span class="label">Date</span><span class="value">{{ donation.donation_date|date:"F j, Y" }}</span></div>
+            <div class="info-row"><span class="label">Type</span><span class="value">{{ donation.get_donation_type_display }}</span></div>
+            {% if donation.donation_type == 'cash' %}
+            <div class="info-row"><span class="label">Method</span><span class="value">{{ donation.get_payment_method_display }}</span></div>
+            {% if donation.transaction_reference %}
+            <div class="info-row"><span class="label">Txn Ref</span><span class="value">{{ donation.transaction_reference }}</span></div>
+            {% endif %}
+            {% endif %}
+            {% if donation.purpose %}
+            <div class="info-row"><span class="label">Purpose</span><span class="value">{{ donation.purpose }}</span></div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Amount / In-kind block -->
+    {% if donation.donation_type == 'cash' %}
+    <div class="amount-section">
+        <div class="amount-label">Amount Received</div>
+        <div class="amount-value">TZS {{ donation.amount|floatformat:"0" }}</div>
+        <div class="amount-words">Tanzania Shillings</div>
+    </div>
+    {% else %}
+    <div class="info-box" style="margin-bottom:24px;">
+        <h4>In-Kind Contribution</h4>
+        <table class="inkind-table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Estimated Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ donation.in_kind_description }}</td>
+                    <td>{% if donation.in_kind_estimated_value %}TZS {{ donation.in_kind_estimated_value|floatformat:"0" }}{% else %}—{% endif %}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Legal note -->
+    <div class="notes-box">
+        This receipt confirms that the above-mentioned donation has been received by {{ org_name|default:"the organisation" }}.
+        Please retain this document for your records. This contribution may be tax-deductible subject to applicable laws
+        in your jurisdiction.
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-note">
+            Generated by CharityOS on {{ receipt.created_at|date:"F j, Y, g:i A" }}.
+            For queries, contact the organisation's finance department.
+        </div>
+        <div class="signature-area">
+            <div class="signature-line"></div>
+            <div class="signature-label">Authorised Signature</div>
+        </div>
+    </div>
+
+    <div class="watermark">OFFICIAL RECEIPT — {{ receipt.receipt_number }}</div>
+
+</div>
+</body>
+</html>

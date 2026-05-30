@@ -149,3 +149,32 @@ Staff write narrative updates about a child's progress. These are visible to lin
    ↓
 5. AssistanceRequest status updated to "fulfilled" when fully funded
 ```
+
+---
+
+## Templates
+
+| Template | Status | Description |
+|----------|--------|-------------|
+| `beneficiaries/list.html` | ✅ Complete | Searchable, filterable list with pagination |
+| `beneficiaries/detail.html` | ✅ Complete | Full profile with sponsors, requests, updates |
+| `beneficiaries/form.html` | ✅ Complete | Create/edit form (shared for both views) |
+| `beneficiaries/requests.html` | ✅ Complete | Assistance request list with approve/reject inline actions |
+| `beneficiaries/request_form.html` | ✅ Complete | Staff request submission form |
+| `beneficiaries/update_form.html` | ✅ Complete | Progress update creation form |
+
+---
+
+## Implementation Status
+
+| Component | Status |
+|-----------|--------|
+| All 4 models | ✅ Complete |
+| All forms | ✅ Complete |
+| Beneficiary CRUD views | ✅ Complete |
+| Assistance request list + create + review | ✅ Complete |
+| Progress update create | ✅ Complete |
+| Admin notification on new requests | ✅ Complete |
+| Staff notification on approval/rejection | ✅ Complete |
+| All 6 templates | ✅ Complete |
+| Django admin | ✅ Complete |

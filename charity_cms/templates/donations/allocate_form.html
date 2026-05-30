@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Allocate Funds — {{ donation.donation_ref }}{% endblock %}
+{% block page_title %}Allocate Funds{% endblock %}
+{% block page_subtitle %}{{ donation.donation_ref }} &mdash; {{ donation.remaining_amount|currency }} available{% endblock %}
+
+{% block content %}
+<div style="max-width:680px; margin:0 auto;">
+
+    <!-- Fund balance banner -->
+    <div class="panel" style="margin-bottom:20px; background:var(--accent-dim); border-color:rgba(52,211,153,0.3);">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+            <div>
+                <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Total Received</div>
+                <div class="font-mono" style="font-size:18px; font-weight:700;">{{ donation.amount|currency }}</div>
+            </div>
+            <i class="ph ph-minus" style="color:var(--muted);"></i>
+            <div>
+                <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Already Allocated</div>
+                <div class="font-mono" style="font-size:18px; font-weight:700; color:var(--accent2);">{{ donation.allocated_amount|currency }}</div>
+            </div>
+            <i class="ph ph-equals" style="color:var(--muted);"></i>
+            <div>
+                <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600;">Available to Allocate</div>
+                <div class="font-mono" style="font-size:22px; font-weight:700; color:var(--accent);">{{ donation.remaining_amount|currency }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Allocation form -->
+    <div class="panel">
+        <div class="panel-title">New Allocation</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Allocation Type</label>
+                    {{ form.allocation_type }}
+                    <div class="error-text">{{ form.allocation_type.errors }}</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (TZS)</label>
+                    {{ form.amount }}
+                    <div class="help-text">Max: {{ donation.remaining_amount|currency }}</div>
+                    <div class="error-text">{{ form.amount.errors }}</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Beneficiary <span style="color:var(--muted); font-weight:400;">(optional)</span></label>
+                {{ form.beneficiary }}
+                <div class="error-text">{{ form.beneficiary.errors }}</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Assistance Request <span style="color:var(--muted); font-weight:400;">(optional)</span></label>
+                {{ form.assistance_request }}
+                <div class="error-text">{{ form.assistance_request.errors }}</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description / Notes</label>
+                {{ form.description }}
+                <div class="error-text">{{ form.description.errors }}</div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'donations:detail' donation.pk %}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary"><i class="ph ph-check"></i> Confirm Allocation</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

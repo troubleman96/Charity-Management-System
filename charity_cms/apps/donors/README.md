@@ -16,3 +16,28 @@ While `apps.accounts` handles the login credentials and profile of a user, the `
   2. The donor's recent `Donation` history.
   3. The specific `Beneficiary` records linked to them via `DonorBeneficiaryLink`.
   4. Recent `ProgressUpdate` entries for their sponsored children, creating a personalized feed of impact.
+
+## URLs
+
+```
+/donor/dashboard/   → Donor dashboard (DonorDashboardView)
+/donor/history/     → Full paginated donation history (DonationHistoryView)
+```
+
+## Templates
+
+| Template | Status | Description |
+|----------|--------|-------------|
+| `donor_portal/dashboard.html` | ✅ Complete | KPIs, sponsored beneficiaries, recent updates |
+| `donor_portal/donation_history.html` | ✅ Complete | Paginated donation history with receipt download links |
+
+## Implementation Status
+
+| Component | Status |
+|-----------|--------|
+| Donor model | ✅ Complete |
+| Donor profile form | ✅ Complete |
+| Donor dashboard view | ✅ Complete |
+| Donation history view | ✅ Complete |
+| All templates | ✅ Complete |
+| Django admin | ✅ Complete |

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monthly Summary Report — {{ month_name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 12px;
+            color: #1a1d27;
+            background: #ffffff;
+        }
+
+        .page { padding: 44px 52px; }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 2px solid #059669;
+        }
+
+        .org { font-size: 22px; font-weight: 700; color: #059669; letter-spacing: -0.3px; }
+        .org-sub { font-size: 11px; color: #6b7280; margin-top: 2px; }
+
+        .report-meta { text-align: right; }
+        .report-meta h2 { font-size: 16px; font-weight: 700; color: #0f1117; text-transform: uppercase; letter-spacing: 0.05em; }
+        .report-meta .period { font-size: 13px; color: #4f46e5; font-weight: 600; margin-top: 3px; }
+        .report-meta .generated { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+
+        /* KPI summary boxes */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-box {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px 16px;
+            background: #f9fafb;
+        }
+
+        .kpi-box.green  { border-color: #6ee7b7; background: #ecfdf5; }
+        .kpi-box.blue   { border-color: #a5b4fc; background: #eef2ff; }
+        .kpi-box.orange { border-color: #fcd34d; background: #fffbeb; }
+        .kpi-box.red    { border-color: #fca5a5; background: #fef2f2; }
+
+        .kpi-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .kpi-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f1117;
+            letter-spacing: -0.5px;
+        }
+
+        .kpi-box.green .kpi-value  { color: #047857; }
+        .kpi-box.blue .kpi-value   { color: #3730a3; }
+        .kpi-box.orange .kpi-value { color: #92400e; }
+
+        /* Section headings */
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #374151;
+            margin: 22px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Donations table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+        }
+
+        th {
+            background: #f3f4f6;
+            padding: 7px 10px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: #6b7280;
+            font-weight: 600;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 7px 10px;
+            border: 1px solid #f3f4f6;
+            font-size: 11px;
+            color: #374151;
+        }
+
+        tr:nth-child(even) td { background: #fafafa; }
+
+        .badge-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-received  { background: #dbeafe; color: #1d4ed8; }
+        .badge-partial   { background: #fef3c7; color: #92400e; }
+        .badge-allocated { background: #d1fae5; color: #065f46; }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            padding-top: 14px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .page-number { font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <div class="org">CharityOS</div>
+            <div class="org-sub">Monthly Operations Summary</div>
+        </div>
+        <div class="report-meta">
+            <h2>Monthly Report</h2>
+            <div class="period">{{ month_name }}</div>
+            <div class="generated">Generated {{ generated_at|date:"F j, Y, g:i A" }}</div>
+        </div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-row">
+        <div class="kpi-box green">
+            <div class="kpi-label">Cash Received</div>
+            <div class="kpi-value">TZS {{ cash_total|floatformat:"0" }}</div>
+        </div>
+        <div class="kpi-box blue">
+            <div class="kpi-label">Allocated Funds</div>
+            <div class="kpi-value">TZS {{ alloc_total|floatformat:"0" }}</div>
+        </div>
+        <div class="kpi-box orange">
+            <div class="kpi-label">Total Donations</div>
+            <div class="kpi-value">{{ donation_count }}</div>
+        </div>
+        <div class="kpi-box">
+            <div class="kpi-label">New Beneficiaries</div>
+            <div class="kpi-value">{{ new_beneficiaries }}</div>
+        </div>
+    </div>
+
+    <!-- Unallocated -->
+    <div class="section-title">Financial Position</div>
+    <table>
+        <tr>
+            <th>Description</th>
+            <th>Amount (TZS)</th>
+        </tr>
+        <tr>
+            <td>Total Cash Received This Month</td>
+            <td><strong>{{ cash_total|floatformat:"0" }}</strong></td>
+        </tr>
+        <tr>
+            <td>Total Funds Allocated This Month</td>
+            <td>{{ alloc_total|floatformat:"0" }}</td>
+        </tr>
+        <tr>
+            <td><strong>Net Unallocated This Month</strong></td>
+            <td><strong>{{ cash_total|add:"-"|add:alloc_total|floatformat:"0"|default:"See full report" }}</strong></td>
+        </tr>
+    </table>
+
+    <!-- Donations list -->
+    <div class="section-title">Donation Transactions ({{ month_name }})</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Reference</th>
+                <th>Donor</th>
+                <th>Type</th>
+                <th>Amount / Value</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in donations %}
+            <tr>
+                <td style="font-family:monospace; color:#4f46e5; font-size:10px;">{{ d.donation_ref }}</td>
+                <td>{{ d.donor.display_name|default:"Anonymous" }}</td>
+                <td>{{ d.get_donation_type_display }}</td>
+                <td style="font-family:monospace; font-weight:600;">
+                    {% if d.donation_type == 'cash' %}
+                        TZS {{ d.amount|floatformat:"0" }}
+                    {% else %}
+                        In-Kind
+                    {% endif %}
+                </td>
+                <td>{{ d.donation_date|date:"M d, Y" }}</td>
+                <td>
+                    <span class="badge-status badge-{{ d.status }}">{{ d.get_status_display }}</span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; color:#9ca3af; padding:16px;">
+                    No donations recorded this month.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>CharityOS &mdash; Confidential Internal Report &mdash; {{ month_name }}</div>
+        <div class="page-number">Page 1</div>
+    </div>
+
+</div>
+</body>
+</html>

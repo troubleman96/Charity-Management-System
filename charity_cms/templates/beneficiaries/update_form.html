@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Post Progress Update{% endblock %}
+{% block page_title %}Post Progress Update{% endblock %}
+{% block page_subtitle %}Share a beneficiary's progress with their sponsors{% endblock %}
+
+{% block content %}
+<div style="max-width:620px; margin:0 auto;">
+
+    <div class="panel">
+        <div class="panel-title">Update Details</div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label">Beneficiary</label>
+                {{ form.beneficiary }}
+                <div class="error-text">{{ form.beneficiary.errors }}</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                {{ form.title }}
+                <div class="help-text">e.g., "Term 2 Report Card" or "Health Checkup — July 2025"</div>
+                <div class="error-text">{{ form.title.errors }}</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Update Content</label>
+                {{ form.content }}
+                <div class="help-text">This message will be visible to all active sponsors of this beneficiary.</div>
+                <div class="error-text">{{ form.content.errors }}</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Photo <span style="color:var(--muted); font-weight:400;">(optional)</span></label>
+                {{ form.photo }}
+                <div class="help-text">Attach a recent photo of the beneficiary or their activities.</div>
+                <div class="error-text">{{ form.photo.errors }}</div>
+            </div>
+
+            <!-- Notice -->
+            <div style="background:var(--accent-dim); border:1px solid rgba(52,211,153,0.3); border-radius:var(--radius); padding:12px 16px; font-size:13px; color:var(--accent); margin-bottom:8px;">
+                <i class="ph ph-heart"></i>
+                &nbsp;Sponsors connected to this beneficiary will be notified and can view this update from their portal.
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'beneficiaries:list' %}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">
+                    <i class="ph ph-check-circle"></i> Post Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

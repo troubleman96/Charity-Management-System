@@ -1,29 +1,34 @@
-/* CharityOS — Table component */
+/* CharityOS — Tables & Pagination */
 table.dt {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: 13.5px;
 }
 
 table.dt th {
   color: var(--muted);
-  font-weight: 400;
+  font-weight: 600;
   text-align: left;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 12px 8px 0;
+  border-bottom: 1.5px solid var(--border);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: .05em;
+  letter-spacing: 0.07em;
 }
 
 table.dt td {
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .04);
+  padding: 11px 12px 11px 0;
+  border-bottom: 1px solid var(--border);
   vertical-align: middle;
+  color: var(--text);
 }
 
 table.dt tr:last-child td {
   border-bottom: none;
+}
+
+table.dt tr:hover td {
+  background: rgba(128, 128, 128, 0.04);
 }
 
 /* Pagination */
@@ -32,31 +37,33 @@ table.dt tr:last-child td {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 .page-btn {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   color: var(--text);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all .2s;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
-.page-btn:hover:not(:disabled) {
-  background: var(--border);
+.page-btn:hover {
+  background: rgba(128, 128, 128, 0.1);
+  border-color: var(--muted);
 }
 
 .page-btn.active {
   background: var(--accent);
-  color: #000;
+  color: #fff;
   border-color: var(--accent);
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

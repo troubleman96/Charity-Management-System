@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load charity_tags %}
+
+{% block title %}Submit Assistance Request{% endblock %}
+{% block page_title %}Submit Assistance Request{% endblock %}
+{% block page_subtitle %}Request resources for a beneficiary — requires admin approval{% endblock %}
+
+{% block content %}
+<div style="max-width:620px; margin:0 auto;">
+
+    <div class="panel">
+        <div class="panel-title">Request Details</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label">Beneficiary</label>
+                {{ form.beneficiary }}
+                <div class="error-text">{{ form.beneficiary.errors }}</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Type of Assistance</label>
+                    {{ form.request_type }}
+                    <div class="error-text">{{ form.request_type.errors }}</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estimated Cost (TZS)</label>
+                    {{ form.estimated_cost }}
+                    <div class="help-text">Approximate cost — admin will confirm before allocation.</div>
+                    <div class="error-text">{{ form.estimated_cost.errors }}</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                {{ form.description }}
+                <div class="help-text">Explain the specific need and urgency. The admin will use this to make their decision.</div>
+                <div class="error-text">{{ form.description.errors }}</div>
+            </div>
+
+            <!-- Info notice -->
+            <div style="background:var(--accent2-dim); border:1px solid rgba(129,140,248,0.3); border-radius:var(--radius); padding:12px 16px; font-size:13px; color:var(--accent2); margin-bottom:8px;">
+                <i class="ph ph-info"></i>
+                &nbsp;After submission, an admin will review and approve or reject this request.
+                You will be notified via the in-app notifications.
+            </div>
+
+            <div class="form-actions">
+                <a href="{% url 'beneficiaries:requests' %}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">
+                    <i class="ph ph-paper-plane-tilt"></i> Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

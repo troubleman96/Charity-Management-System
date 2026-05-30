@@ -104,3 +104,27 @@ Two signals are connected to the `User` model's `post_save` event:
 - `templates/accounts/login.html` — Dark-themed login form with CSS classes from the design system.
 - `templates/accounts/register.html` — Multi-section registration form (Personal Info → Contact).
 - `templates/accounts/profile.html` — Profile view/edit page.
+
+---
+
+## Implementation Status
+
+| Component | Status |
+|-----------|--------|
+| UserProfile model | ✅ Complete |
+| Post-save signal (auto-create profile) | ✅ Complete |
+| Email/username login backend | ✅ Complete |
+| Login / logout / register views | ✅ Complete |
+| Profile view/edit | ✅ Complete |
+| All templates | ✅ Complete |
+| Django admin (inline profile editing) | ✅ Complete |
+
+## Seed Users
+
+Use the `seed_users` management command (in the `core` app) to create test accounts for all roles:
+
+```bash
+python manage.py seed_users
+```
+
+See `apps/core/README.md` for credentials.

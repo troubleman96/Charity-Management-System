@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You for Your Donation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f4f6fa;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            color: #374151;
+            -webkit-text-size-adjust: none;
+        }
+
+        .wrapper {
+            max-width: 580px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        /* Logo bar */
+        .header {
+            background: #059669;
+            border-radius: 12px 12px 0 0;
+            padding: 28px 36px;
+            text-align: center;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .header-logo em {
+            font-style: normal;
+            opacity: 0.8;
+        }
+
+        /* Body card */
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            padding: 36px;
+        }
+
+        .greeting {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f1117;
+            margin-bottom: 8px;
+        }
+
+        .sub {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        /* Highlight box */
+        .highlight {
+            background: #ecfdf5;
+            border: 1.5px solid #6ee7b7;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .highlight-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #059669;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .highlight-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #047857;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Summary table */
+        .summary {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 28px;
+        }
+
+        .summary td {
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 13px;
+        }
+
+        .summary td:first-child { color: #6b7280; }
+        .summary td:last-child  { font-weight: 600; color: #0f1117; text-align: right; }
+
+        .summary tr:last-child td { border-bottom: none; }
+
+        /* Message */
+        .message-box {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        /* CTA button */
+        .cta {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .cta a {
+            display: inline-block;
+            background: #059669;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 20px 36px;
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="header">
+        <div class="header-logo">Charity<em>OS</em></div>
+    </div>
+
+    <div class="card">
+        <div class="greeting">Thank you, {{ donation.donor.display_name|default:"Valued Donor" }}!</div>
+        <div class="sub">
+            Your generous contribution has been received and officially recorded.
+            Below are the details of your donation.
+        </div>
+
+        {% if donation.donation_type == 'cash' %}
+        <div class="highlight">
+            <div class="highlight-label">Donation Amount</div>
+            <div class="highlight-amount">TZS {{ donation.amount|floatformat:"0" }}</div>
+        </div>
+        {% else %}
+        <div class="highlight">
+            <div class="highlight-label">In-Kind Donation</div>
+            <div style="font-size:15px; font-weight:600; color:#047857;">{{ donation.in_kind_description|truncatewords:20 }}</div>
+            {% if donation.in_kind_estimated_value %}
+            <div style="font-size:12px; color:#6b7280; margin-top:4px;">Estimated value: TZS {{ donation.in_kind_estimated_value|floatformat:"0" }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <table class="summary">
+            <tr>
+                <td>Receipt Number</td>
+                <td>{{ receipt.receipt_number }}</td>
+            </tr>
+            <tr>
+                <td>Donation Reference</td>
+                <td>{{ donation.donation_ref }}</td>
+            </tr>
+            <tr>
+                <td>Date Received</td>
+                <td>{{ donation.donation_date|date:"F j, Y" }}</td>
+            </tr>
+            {% if donation.donation_type == 'cash' %}
+            <tr>
+                <td>Payment Method</td>
+                <td>{{ donation.get_payment_method_display }}</td>
+            </tr>
+            {% if donation.transaction_reference %}
+            <tr>
+                <td>Transaction Reference</td>
+                <td>{{ donation.transaction_reference }}</td>
+            </tr>
+            {% endif %}
+            {% endif %}
+            {% if donation.purpose %}
+            <tr>
+                <td>Purpose</td>
+                <td>{{ donation.purpose }}</td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <div class="message-box">
+            Your donation directly supports children in our programme — providing education, nutrition, healthcare,
+            and a brighter future. We are deeply grateful for your commitment to making a difference.
+        </div>
+
+        {% if receipt.pdf_file %}
+        <div class="cta">
+            <a href="{{ receipt.pdf_file.url }}">Download PDF Receipt</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        This email was sent by CharityOS &mdash; an official receipt for your records.<br>
+        Please retain this for tax purposes. &copy; {{ donation.donation_date|date:"Y" }} CharityOS.
+    </div>
+
+</div>
+</body>
+</html>

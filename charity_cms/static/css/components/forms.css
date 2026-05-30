@@ -1,45 +1,56 @@
-/* CharityOS — Forms component */
+/* CharityOS — Forms */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .form-label {
   display: block;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 6px;
-  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 7px;
+  font-weight: 600;
 }
 
-.form-input {
+.form-input,
+input[type="text"].form-input,
+input[type="email"].form-input,
+input[type="number"].form-input,
+input[type="date"].form-input,
+input[type="password"].form-input,
+textarea.form-input,
+select.form-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
   color: var(--text);
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
   font-family: var(--font);
-  font-size: 13px;
-  transition: all 0.2s;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: block;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--accent2);
-  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
 }
 
 .form-input::placeholder {
-  color: rgba(123, 128, 153, 0.5);
+  color: var(--muted);
+  opacity: 0.7;
 }
 
+/* Select arrow */
 select.form-input {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237b8099'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238890aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  background-size: 14px;
-  padding-right: 32px;
+  background-size: 16px;
+  padding-right: 36px;
+  cursor: pointer;
 }
 
 select.form-input option {
@@ -47,29 +58,68 @@ select.form-input option {
   color: var(--text);
 }
 
+textarea.form-input {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* File input */
+input[type="file"].form-input {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* Checkbox */
 .form-checkbox {
   accent-color: var(--accent);
   width: 16px;
   height: 16px;
+  cursor: pointer;
 }
 
+/* Help text */
 .help-text {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
-  margin-top: 4px;
+  margin-top: 5px;
   display: block;
 }
 
-.error-text {
+/* Error text */
+.error-text, .errorlist {
   color: var(--danger);
-  font-size: 11px;
-  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 5px;
   display: block;
+  list-style: none;
 }
 
-/* Two column layout for forms */
+/* Section separator within form */
+.form-section {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 24px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Two-column grid */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+}
+
+/* Form action bar */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }

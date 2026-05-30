@@ -1,89 +1,121 @@
-/* CharityOS — Buttons component */
+/* CharityOS — Buttons */
 button, .btn {
   font-family: var(--font);
   cursor: pointer;
-  transition: all .2s ease;
+  transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
+  white-space: nowrap;
 }
 
+/* Primary — accent fill */
 .btn-primary {
   background: var(--accent);
-  color: #000;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
   font-weight: 600;
+  box-shadow: 0 2px 6px rgba(52, 211, 153, 0.3);
 }
 
 .btn-primary:hover {
-  background: #5cd0a2;
+  filter: brightness(1.08);
+  box-shadow: 0 4px 12px rgba(52, 211, 153, 0.4);
 }
 
+[data-theme="light"] .btn-primary {
+  color: #fff;
+}
+
+/* Secondary — outlined */
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   color: var(--text);
-  border: 1px solid var(--border);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13px;
+  border: 1.5px solid var(--border);
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
   font-weight: 500;
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(128, 128, 128, 0.08);
+  border-color: var(--muted);
 }
 
+/* Small — accent2 tinted */
 .btn-sm {
-  background: rgba(129, 140, 248, .15);
+  background: var(--accent2-dim);
   color: var(--accent2);
-  border: none;
-  padding: 7px 14px;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .btn-sm:hover {
-  background: rgba(129, 140, 248, .25);
+  background: rgba(129, 140, 248, 0.25);
 }
 
+/* Danger */
+.btn-danger {
+  background: var(--danger-dim);
+  color: var(--danger);
+  border: 1px solid transparent;
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.btn-danger:hover {
+  background: rgba(248, 113, 113, 0.22);
+}
+
+/* Approve / Reject inline buttons */
 .btn-approve {
-  background: rgba(52, 211, 153, .15);
+  background: var(--success-dim);
   color: var(--success);
   border: none;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.btn-approve:hover { background: rgba(52, 211, 153, .25); }
+.btn-approve:hover { filter: brightness(1.1); }
 
 .btn-reject {
-  background: rgba(248, 113, 113, .12);
+  background: var(--danger-dim);
   color: var(--danger);
   border: none;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.btn-reject:hover { background: rgba(248, 113, 113, .22); }
+.btn-reject:hover { filter: brightness(1.1); }
 
+/* Legacy btn-action (kept for compat) */
 .btn-action {
   background: transparent;
   color: var(--muted);
   border: none;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-action:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(128, 128, 128, 0.1);
 }
